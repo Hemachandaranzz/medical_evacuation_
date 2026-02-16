@@ -76,7 +76,7 @@ router.post('/', clinicAuth, async (req, res) => {
             .insert([{
                 patient_id,
                 name,
-                full_name: name, // Map name to full_name to satisfy DB constraint
+                full_name: name,
                 age,
                 gender,
                 blood_type,

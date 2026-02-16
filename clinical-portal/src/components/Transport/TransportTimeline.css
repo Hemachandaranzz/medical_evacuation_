@@ -1,0 +1,134 @@
+
+.transport-timeline-container {
+    padding: 1rem 0;
+    margin-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.transport-timeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+}
+
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.timeline-step.completed,
+.timeline-step.active {
+    opacity: 1;
+}
+
+.step-connector {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    position: relative;
+    height: 30px;
+}
+
+.step-indicator {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--surface-color);
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.timeline-step.completed .step-indicator {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.timeline-step.active .step-indicator {
+    background-color: var(--background-color);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
+    transform: scale(1.1);
+}
+
+.line {
+    flex: 1;
+    height: 2px;
+    background-color: var(--border-color);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50%;
+    z-index: 1;
+}
+
+/* Lines connecting steps */
+/* Left line for steps after first */
+.timeline-step:not(:first-child) .step-connector::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50%;
+    height: 2px;
+    background-color: var(--border-color);
+    z-index: 1;
+}
+
+/* Right line for steps before last */
+.timeline-step:not(:last-child) .step-connector::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50%;
+    height: 2px;
+    background-color: var(--border-color);
+    z-index: 1;
+}
+
+/* Active/Completed Lines */
+.timeline-step.completed .step-connector::before,
+.timeline-step.active .step-connector::before,
+.timeline-step.completed .step-connector::after {
+    background-color: var(--primary-color);
+}
+
+.step-content {
+    margin-top: 0.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.step-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.timeline-step.active .step-label {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.step-time {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+}

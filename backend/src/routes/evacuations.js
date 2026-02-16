@@ -14,7 +14,7 @@ router.get('/', clinicAuth, async (req, res) => {
             .select(`
                 *,
                 patient:patients(id, name, patient_id),
-                clinic:clinics(id, name, location_name)
+                clinic:clinics(id, name, operating_location)
             `)
             .eq('origin_clinic_id', req.clinicId) // MANDATORY Isolation
             .order('id', { ascending: false });
@@ -65,7 +65,7 @@ router.post('/', clinicAuth, async (req, res) => {
             .select(`
                 *,
                 patient:patients(id, name, patient_id),
-                clinic:clinics(id, name, location_name)
+                clinic:clinics(id, name, operating_location)
             `)
             .single();
 

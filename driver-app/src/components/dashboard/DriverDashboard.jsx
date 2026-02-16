@@ -165,8 +165,48 @@ export default function DriverDashboard({ driver, onUpdate }) {
         try {
             setIsSyncing(true)
 
-            // If it's a booking (from clinical portal), we need to create a transport_request or assignment?
-            // Usually we create an assignment directly
+            let requestIdToUse = request.id;
+
+            // IF IT'S A BOOKING (from Clinical Portal), we must first create a transport_request
+            // because transport_assignments table requires a valid request_id foreign key.
+            if (request.isBooking) {
+                // Map booking fields (location) to request fields (address)
+                const { data: newRequest, error: reqError } = await supabase
+                    .from('transport_requests')
+                    .insert({
+                        patient_id: null, // Optional, or map if available
+                        // MAPPING REQUIRED FIELDS FROM SCHEMA
+                        pickup_address: request.pickup_address,
+                        destination_address: request.destination_address,
+
+                        // NON-NULLABLE GEO FIELDS (Use 0 as fallback if missing, or actual values)
+                        pickup_latitude: request.pickup_latitude || 0,
+                        pickup_longitude: request.pickup_longitude || 0,
+                        destination_latitude: request.destination_latitude || 0,
+                        destination_longitude: request.destination_longitude || 0,
+
+                        // NON-NULLABLE ENUMS/TEXT
+                        patient_reference_id: request.patient_id || 'UNKNOWN',
+
+                        // Map 'routine' to 'non_urgent' to satisfy severity_enum ('critical', 'urgent', 'stable', 'non_urgent')
+                        severity_level: (request.severity_level === 'routine' ? 'non_urgent' : request.severity_level) || 'non_urgent',
+
+                        // Map vehicle type if needed, strict enum: 'helicopter', 'ambulance', 'boat', 'land_ambulance', 'other'
+                        required_transport_type: 'ambulance', // Default for now, ideally map from request.recommended_vehicle_type
+
+                        status: 'assigned'
+                        // removed invalid fields: urgency_level, requested_by, notes
+                    })
+                    .select()
+                    .single();
+
+                if (reqError) {
+                    console.error('Failed to create intermediate request:', reqError);
+                    throw new Error('Could not process booking. Database schema mismatch or constraint failed.');
+                }
+
+                requestIdToUse = newRequest.id;
+            }
 
             // 1. Create a new assignment
             const { data: assignment, error: assignmentError } = await supabase
@@ -177,9 +217,8 @@ export default function DriverDashboard({ driver, onUpdate }) {
                     vehicle_id: driver.current_vehicle_id, // Assuming driver has a vehicle assigned
                     current_status: 'accepted',
                     accepted_at: new Date().toISOString(),
-                    // Link to request or booking
-                    request_id: request.isBooking ? null : request.id,
-                    booking_id: request.isBooking ? request.id : null,
+                    // Link to the request/booking (now guaranteed to be a valid request_id)
+                    request_id: requestIdToUse
                 })
                 .select()
                 .single()
@@ -188,6 +227,7 @@ export default function DriverDashboard({ driver, onUpdate }) {
 
             // 2. Update the source status
             if (request.isBooking) {
+                // Update the original booking too
                 await supabase
                     .from('transport_bookings')
                     .update({
@@ -196,6 +236,7 @@ export default function DriverDashboard({ driver, onUpdate }) {
                     })
                     .eq('id', request.id)
             } else {
+                // If it was already a request, we update it (though we set status 'assigned' above for new ones)
                 await supabase
                     .from('transport_requests')
                     .update({ status: 'assigned' })

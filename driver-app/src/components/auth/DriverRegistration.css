@@ -1,19 +1,45 @@
+/* ========================================
+   DRIVER REGISTRATION — DARK PREMIUM DESIGN
+   ======================================== */
+
 .registration-page {
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: var(--spacing-lg);
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: var(--color-bg-deep);
+    position: relative;
+    overflow: hidden;
+}
+
+.registration-page::before {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.15;
+    top: -100px;
+    right: -100px;
 }
 
 .registration-container {
-    background: var(--color-bg);
-    border-radius: var(--radius-xl);
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-3xl);
     padding: var(--spacing-xl);
     width: 100%;
     max-width: 480px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.6s var(--ease-out);
 }
 
 .registration-header {
@@ -27,15 +53,20 @@
     justify-content: center;
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, var(--color-success), #059669);
-    border-radius: var(--radius-xl);
+    background: var(--gradient-primary);
+    border-radius: var(--radius-2xl);
     margin-bottom: var(--spacing-md);
     color: white;
+    box-shadow: 0 8px 32px var(--color-primary-glow);
 }
 
 .registration-header h1 {
     font-size: var(--font-size-2xl);
     margin-bottom: var(--spacing-xs);
+    background: linear-gradient(135deg, #f1f5f9 0%, #34d399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .registration-header p {
@@ -44,8 +75,9 @@
 }
 
 .profile-preview {
-    background: var(--color-bg-secondary);
-    border-radius: var(--radius-lg);
+    background: rgba(15, 19, 50, 0.6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
     padding: var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
 }
@@ -53,6 +85,7 @@
 .profile-preview h3 {
     font-size: var(--font-size-lg);
     margin-bottom: var(--spacing-md);
+    color: var(--color-text-accent);
 }
 
 .profile-info {
@@ -61,25 +94,31 @@
     gap: var(--spacing-md);
 }
 
-.info-item {
+.profile-info .info-item {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
     color: var(--color-text);
+    background: rgba(20, 25, 65, 0.8);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(16, 185, 129, 0.1);
 }
 
-.info-item svg {
-    color: var(--color-success);
+.profile-info .info-item svg {
+    color: var(--color-primary-light);
     flex-shrink: 0;
+    filter: drop-shadow(0 0 4px var(--color-primary-glow));
 }
 
 .error-message {
-    background-color: #fee2e2;
-    color: #991b1b;
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
     padding: var(--spacing-md);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     margin-bottom: var(--spacing-lg);
     font-size: var(--font-size-sm);
+    border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .registration-form {
@@ -94,20 +133,27 @@
 }
 
 .error-card {
-    background: var(--color-bg);
-    border-radius: var(--radius-xl);
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-3xl);
     padding: var(--spacing-2xl);
     text-align: center;
     max-width: 400px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
 }
 
 .error-card h2 {
-    color: var(--color-danger);
+    color: #f87171;
     margin-bottom: var(--spacing-md);
 }
 
 .error-card p {
     margin-bottom: var(--spacing-sm);
+    color: var(--color-text-secondary);
 }
 
 .loading-container {
@@ -115,4 +161,6 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--color-bg-deep);
 }

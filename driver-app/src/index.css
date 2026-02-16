@@ -1,39 +1,82 @@
+/* =====================================================
+   DRIVER APP — PREMIUM DARK MOBILE-FIRST DESIGN SYSTEM
+   ===================================================== */
+
 :root {
-    /* Mobile-optimized color palette */
-    --color-primary: #3b82f6;
-    --color-primary-dark: #2563eb;
+    /* --- DARK THEME PALETTE (Emerald/Cyan accent) --- */
+    --color-bg-deep: #0a0e27;
+    --color-bg-primary: #0f1332;
+    --color-bg-card: rgba(15, 19, 50, 0.7);
+    --color-bg-elevated: rgba(20, 25, 65, 0.8);
+    --color-bg-surface: rgba(30, 35, 80, 0.5);
+    --color-bg-hover: rgba(40, 45, 100, 0.4);
+
+    /* Primary (Emerald → Cyan) */
+    --color-primary: #10b981;
+    --color-primary-light: #34d399;
+    --color-primary-dark: #059669;
+    --color-primary-glow: rgba(16, 185, 129, 0.3);
+    --gradient-primary: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+
+    /* Secondary (Violet) */
+    --color-secondary: #8b5cf6;
+    --color-secondary-glow: rgba(139, 92, 246, 0.2);
+
+    /* Accent Gradients */
+    --gradient-accent: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    --gradient-danger: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+    --gradient-info: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+
+    /* Text Colors */
+    --color-text: #f1f5f9;
+    --color-text-secondary: #94a3b8;
+    --color-text-tertiary: #64748b;
+    --color-text-accent: #34d399;
+
+    /* Status Colors */
     --color-success: #10b981;
     --color-warning: #f59e0b;
     --color-danger: #ef4444;
-    --color-critical: #dc2626;
 
-    /* Neutrals */
-    --color-bg: #ffffff;
-    --color-bg-secondary: #f9fafb;
-    --color-bg-tertiary: #f3f4f6;
-    --color-border: #e5e7eb;
-    --color-text: #111827;
-    --color-text-secondary: #6b7280;
+    /* Borders */
+    --color-border: rgba(16, 185, 129, 0.15);
+    --color-border-subtle: rgba(255, 255, 255, 0.06);
+    --color-border-glow: rgba(16, 185, 129, 0.3);
 
-    /* Mobile spacing */
+    /* Glass Effects */
+    --glass-bg: rgba(15, 19, 50, 0.6);
+    --glass-bg-strong: rgba(15, 19, 50, 0.85);
+    --glass-border: rgba(16, 185, 129, 0.12);
+    --glass-blur: 20px;
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+    /* Spacing */
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;
     --spacing-md: 1rem;
     --spacing-lg: 1.5rem;
     --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
 
     /* Border Radius */
     --radius-sm: 0.375rem;
     --radius-md: 0.5rem;
     --radius-lg: 0.75rem;
     --radius-xl: 1rem;
+    --radius-2xl: 1.25rem;
+    --radius-3xl: 1.5rem;
 
     /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.4);
+    --shadow-glow: 0 0 30px rgba(16, 185, 129, 0.15);
 
-    /* Typography - Mobile optimized */
+    /* Typography */
+    --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-family-display: 'Outfit', 'Inter', system-ui, sans-serif;
     --font-size-xs: 0.75rem;
     --font-size-sm: 0.875rem;
     --font-size-base: 1rem;
@@ -41,7 +84,17 @@
     --font-size-xl: 1.25rem;
     --font-size-2xl: 1.5rem;
     --font-size-3xl: 1.875rem;
+
+    /* Transitions */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-fast: 150ms var(--ease-out);
+    --transition-base: 250ms var(--ease-out);
+    --transition-slow: 400ms var(--ease-out);
 }
+
+/* =====================================================
+   BASE STYLES
+   ===================================================== */
 
 * {
     margin: 0;
@@ -51,50 +104,75 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-        sans-serif;
+    font-family: var(--font-family);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: var(--color-bg-secondary);
+    background: var(--color-bg-deep);
     color: var(--color-text);
-    line-height: 1.5;
+    line-height: 1.6;
     overscroll-behavior: none;
 }
 
 #root {
     min-height: 100vh;
-    min-height: -webkit-fill-available;
+    min-height: 100dvh;
 }
 
-/* Typography */
+/* =====================================================
+   CUSTOM SCROLLBAR
+   ===================================================== */
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(16, 185, 129, 0.3);
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(16, 185, 129, 0.5);
+}
+
+/* =====================================================
+   TYPOGRAPHY
+   ===================================================== */
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-    font-weight: 600;
+    font-family: var(--font-family-display);
+    font-weight: 700;
     line-height: 1.2;
+    color: var(--color-text);
+    letter-spacing: -0.02em;
 }
 
-/* Buttons - Touch optimized */
+/* =====================================================
+   BUTTONS — MOBILE OPTIMIZED
+   ===================================================== */
+
 button {
-    font-family: inherit;
+    font-family: var(--font-family);
     font-size: var(--font-size-base);
-    font-weight: 500;
+    font-weight: 600;
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-xl);
     cursor: pointer;
-    transition: all 200ms ease;
-    padding: var(--spacing-md) var(--spacing-lg);
-    min-height: 44px;
-    /* iOS touch target */
+    transition: all var(--transition-base);
+    padding: 12px var(--spacing-lg);
+    min-height: 48px;
+    letter-spacing: -0.01em;
     touch-action: manipulation;
-}
-
-button:active {
-    transform: scale(0.98);
 }
 
 button:disabled {
@@ -102,41 +180,64 @@ button:disabled {
     cursor: not-allowed;
 }
 
+button:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
 .btn-primary {
-    background-color: var(--color-primary);
+    background: var(--gradient-primary);
     color: white;
+    box-shadow: 0 4px 16px var(--color-primary-glow);
 }
 
-.btn-success {
-    background-color: var(--color-success);
-    color: white;
-}
-
-.btn-danger {
-    background-color: var(--color-danger);
-    color: white;
+.btn-primary:hover:not(:disabled) {
+    box-shadow: 0 8px 24px var(--color-primary-glow);
 }
 
 .btn-secondary {
-    background-color: var(--color-bg-tertiary);
-    color: var(--color-text);
+    background: var(--color-bg-surface);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--color-bg-hover);
+    border-color: var(--color-border-glow);
+}
+
+.btn-danger {
+    background: var(--gradient-danger);
+    color: white;
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
 }
 
 .btn-full {
     width: 100%;
 }
 
-/* Inputs - Touch optimized */
+/* =====================================================
+   INPUTS — MOBILE OPTIMIZED
+   ===================================================== */
+
 input,
 select,
 textarea {
-    font-family: inherit;
-    font-size: var(--font-size-base);
-    padding: var(--spacing-md);
+    font-family: var(--font-family);
+    font-size: 16px;
+    /* Prevents iOS zoom */
+    padding: 14px var(--spacing-md);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-xl);
     width: 100%;
-    min-height: 44px;
+    background: var(--color-bg-surface);
+    color: var(--color-text);
+    transition: all var(--transition-fast);
+    min-height: 48px;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--color-text-tertiary);
 }
 
 input:focus,
@@ -144,63 +245,34 @@ select:focus,
 textarea:focus {
     outline: none;
     border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-glow);
+    background: var(--color-bg-elevated);
 }
 
 label {
     display: block;
     font-size: var(--font-size-sm);
-    font-weight: 500;
-    margin-bottom: var(--spacing-xs);
-}
-
-/* Cards */
-.card {
-    background-color: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-sm);
-}
-
-/* Status Badges */
-.badge {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-sm);
-    font-size: var(--font-size-xs);
     font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-text-secondary);
     text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
-.badge-success {
-    background: #d1fae5;
-    color: #065f46;
-}
+/* =====================================================
+   ANIMATIONS
+   ===================================================== */
 
-.badge-warning {
-    background: #fed7aa;
-    color: #92400e;
-}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
 
-.badge-danger {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-.badge-info {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-/* Loading Spinner */
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid var(--color-border);
-    border-top-color: var(--color-primary);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes spin {
@@ -209,65 +281,91 @@ label {
     }
 }
 
-/* Utility Classes */
-.flex {
-    display: flex;
-}
+@keyframes pulse {
 
-.flex-col {
-    flex-direction: column;
-}
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 
-.items-center {
-    align-items: center;
-}
-
-.justify-center {
-    justify-content: center;
-}
-
-.justify-between {
-    justify-content: space-between;
-}
-
-.gap-sm {
-    gap: var(--spacing-sm);
-}
-
-.gap-md {
-    gap: var(--spacing-md);
-}
-
-.text-center {
-    text-align: center;
-}
-
-.text-sm {
-    font-size: var(--font-size-sm);
-}
-
-.text-gray {
-    color: var(--color-text-secondary);
-}
-
-.font-semibold {
-    font-weight: 600;
-}
-
-/* Safe area insets for notched devices */
-@supports (padding: max(0px)) {
-    body {
-        padding-left: env(safe-area-inset-left);
-        padding-right: env(safe-area-inset-right);
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
     }
 }
 
-/* Prevent zoom on input focus (iOS) */
-@media screen and (max-width: 768px) {
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
-        font-size: 16px;
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 8px var(--color-primary-glow);
+    }
+
+    50% {
+        box-shadow: 0 0 20px var(--color-primary-glow);
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* =====================================================
+   STATUS BADGES
+   ===================================================== */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* =====================================================
+   LOADING SPINNER
+   ===================================================== */
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* =====================================================
+   SAFE AREA
+   ===================================================== */
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .safe-area-bottom {
+        padding-bottom: env(safe-area-inset-bottom);
     }
 }

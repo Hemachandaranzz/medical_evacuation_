@@ -205,7 +205,7 @@ router.get('/', authMiddleware, async (req, res) => {
             .select(`
                 *,
                 patient:patients(id, name, patient_id, risk_score),
-                clinic:clinics(id, name, location_name, contact_phone),
+                clinic:clinics(id, name, operating_location, contact_phone),
                 vehicle:vehicles(id, vehicle_name, vehicle_type),
                 driver:drivers(id, full_name, phone_number, current_status)
             `)
@@ -241,14 +241,14 @@ router.get('/clinic', clinicAuth, async (req, res) => {
         const clinicId = req.clinicId;
         console.log(`[GET /bookings/clinic] Fetching bookings for clinic: ${clinicId}`);
 
+        // 1. Fetch bookings without assignments join
         const { data: bookings, error } = await supabase
             .from('transport_bookings')
             .select(`
                 *,
                 patient:patients(id, name, patient_id, risk_score),
                 company:transport_companies(id, company_name, contact_phone),
-                vehicle:vehicles(id, vehicle_name, vehicle_type),
-                assignments:transport_assignments(current_status, driver_id, driver:drivers(full_name))
+                vehicle:vehicles(id, vehicle_name, vehicle_type)
             `)
             .eq('clinic_id', clinicId)
             .order('created_at', { ascending: false });
@@ -256,6 +256,52 @@ router.get('/clinic', clinicAuth, async (req, res) => {
         if (error) {
             console.error('[GET /bookings/clinic] Error:', error);
             throw error;
+        }
+
+        // 2. Manual Join: Fetch assignments for these bookings
+        if (bookings && bookings.length > 0) {
+            // Strategy: Link via driver_id because transport_bookings and transport_assignments
+            // don't share a direct ID, but they share a driver when active.
+            const driverIds = bookings
+                .filter(b => b.driver_id)
+                .map(b => b.driver_id);
+
+            console.log(`[GET /bookings/clinic] Checking assignments for drivers:`, driverIds);
+
+            let assignments = [];
+
+            if (driverIds.length > 0) {
+                const { data: activeAssignments, error: assignmentsError } = await supabase
+                    .from('transport_assignments')
+                    .select(`
+                        *,
+                        driver:drivers(full_name)
+                    `)
+                    .in('driver_id', driverIds)
+                    .not('current_status', 'in', '(delivered,cancelled)'); // Only active assignments (exclude final states)
+
+                if (assignmentsError) {
+                    console.error('[GET /bookings/clinic] Assignments Error:', assignmentsError);
+                } else {
+                    assignments = activeAssignments || [];
+                    console.log(`[GET /bookings/clinic] Found ${assignments.length} active assignments.`);
+                }
+            }
+
+            // Merge assignments into bookings
+            bookings.forEach(booking => {
+                booking.assignments = [];
+
+                if (booking.driver_id && assignments.length > 0) {
+                    // Find assignment for this driver
+                    // We assume a driver has only ONE active assignment at a time
+                    const match = assignments.find(a => a.driver_id === booking.driver_id);
+                    if (match) {
+                        console.log(`[GET /bookings/clinic] Linking booking ${booking.id} to assignment ${match.id} (Status: ${match.current_status})`);
+                        booking.assignments = [match];
+                    }
+                }
+            });
         }
 
         console.log(`[GET /bookings/clinic] Found ${bookings?.length || 0} bookings`);
@@ -390,7 +436,7 @@ router.post('/', clinicAuth, async (req, res) => {
             .select(`
                 *,
                 patient:patients(id, name, patient_id, risk_score),
-                clinic:clinics(id, name, location_name),
+                clinic:clinics(id, name, operating_location),
                 company:transport_companies(id, company_name, contact_phone),
                 vehicle:vehicles(id, vehicle_name, vehicle_type)
             `)
@@ -434,7 +480,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
             .select(`
                 *,
                 patient:patients(id, name, patient_id, risk_score, status),
-                clinic:clinics(id, name, location_name, contact_phone),
+                clinic:clinics(id, name, operating_location, contact_phone),
                 company:transport_companies(id, company_name, contact_email, contact_phone),
                 vehicle:vehicles(id, vehicle_name, vehicle_type, capacity),
                 driver:drivers(id, full_name, phone_number, current_status)
@@ -554,10 +600,10 @@ router.get('/patient/:patientId', authMiddleware, async (req, res) => {
             .select(`
                 *,
                 patient:patients(id, name, patient_id, risk_score),
-                clinic:clinics(id, name, location_name, contact_phone),
+                clinic:clinics(id, name, operating_location, contact_phone),
                 company:transport_companies(id, company_name, contact_email, contact_phone),
                 vehicle:vehicles(id, vehicle_name, vehicle_type, capacity),
-                driver:drivers(id, name, phone, current_status)
+                driver:drivers(id, full_name, phone_number, current_status)
             `)
             .eq('patient_id', patientId)
             .order('requested_at', { ascending: false });

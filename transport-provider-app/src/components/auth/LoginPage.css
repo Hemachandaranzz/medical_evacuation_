@@ -1,19 +1,59 @@
+/* ========================================
+   LOGIN PAGE — DARK GLASSMORPHIC DESIGN
+   ======================================== */
+
 .login-page {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--color-bg-deep);
     padding: var(--spacing-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated background orbs */
+.login-page::before,
+.login-page::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: float 8s ease-in-out infinite;
+}
+
+.login-page::before {
+    width: 400px;
+    height: 400px;
+    background: var(--gradient-primary);
+    top: -100px;
+    right: -100px;
+}
+
+.login-page::after {
+    width: 350px;
+    height: 350px;
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    bottom: -80px;
+    left: -80px;
+    animation-delay: 4s;
 }
 
 .login-container {
-    background: var(--color-bg);
-    border-radius: var(--radius-xl);
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-3xl);
     padding: var(--spacing-2xl);
     width: 100%;
-    max-width: 420px;
-    box-shadow: var(--shadow-lg);
+    max-width: 440px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    position: relative;
+    z-index: 2;
+    animation: fadeInUp 0.6s var(--ease-out);
 }
 
 .login-header {
@@ -27,15 +67,21 @@
     justify-content: center;
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-    border-radius: var(--radius-xl);
+    background: var(--gradient-primary);
+    border-radius: var(--radius-2xl);
     margin-bottom: var(--spacing-md);
     color: white;
+    box-shadow: 0 8px 32px var(--color-primary-glow);
+    animation: glow 3s ease-in-out infinite;
 }
 
 .login-header h1 {
     font-size: var(--font-size-2xl);
     margin-bottom: var(--spacing-xs);
+    background: linear-gradient(135deg, #f1f5f9 0%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .login-header p {
@@ -44,12 +90,13 @@
 }
 
 .error-message {
-    background-color: #fee2e2;
-    color: #991b1b;
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
     padding: var(--spacing-md);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     margin-bottom: var(--spacing-lg);
     font-size: var(--font-size-sm);
+    border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .login-form {
@@ -69,7 +116,7 @@
     align-items: center;
     text-align: center;
     margin: var(--spacing-lg) 0;
-    color: var(--color-text-secondary);
+    color: var(--color-text-muted);
     font-size: var(--font-size-sm);
 }
 
@@ -90,19 +137,21 @@
     justify-content: center;
     gap: var(--spacing-sm);
     width: 100%;
-    background-color: var(--color-bg);
-    color: var(--color-text);
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
     border: 1px solid var(--color-border);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: var(--radius-md);
-    font-weight: 500;
+    padding: 12px var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-base);
 }
 
 .btn-google:hover:not(:disabled) {
-    background-color: var(--color-bg-tertiary);
-    border-color: var(--color-text-tertiary);
+    background: var(--color-bg-hover);
+    border-color: var(--color-border-glow);
+    box-shadow: 0 0 20px var(--color-primary-glow);
+    transform: translateY(-2px);
 }
 
 .toggle-mode {
@@ -119,8 +168,10 @@
     font-weight: 600;
     cursor: pointer;
     padding: 0;
+    transition: color var(--transition-fast);
 }
 
 .link-button:hover {
+    color: var(--color-primary-light);
     text-decoration: underline;
 }

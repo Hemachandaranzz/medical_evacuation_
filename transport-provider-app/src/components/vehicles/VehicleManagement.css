@@ -1,3 +1,7 @@
+/* ========================================
+   VEHICLE MANAGEMENT — DARK PREMIUM DESIGN
+   ======================================== */
+
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -11,23 +15,28 @@
     gap: var(--spacing-sm);
 }
 
+/* Empty State */
 .empty-state {
-    background: var(--color-bg);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 2px dashed var(--color-border);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-2xl);
     padding: var(--spacing-2xl);
     text-align: center;
     margin-top: var(--spacing-2xl);
 }
 
 .empty-state svg {
-    color: var(--color-text-tertiary);
+    color: var(--color-text-muted);
     margin-bottom: var(--spacing-lg);
+    filter: drop-shadow(0 0 8px var(--color-primary-glow));
 }
 
 .empty-state h3 {
     font-size: var(--font-size-xl);
     margin-bottom: var(--spacing-sm);
+    color: var(--color-text-primary);
 }
 
 .empty-state p {
@@ -35,6 +44,7 @@
     margin-bottom: var(--spacing-xl);
 }
 
+/* Vehicle Grid */
 .vehicle-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -42,16 +52,37 @@
 }
 
 .vehicle-card {
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-2xl);
     padding: var(--spacing-lg);
     transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.vehicle-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity var(--transition-base);
 }
 
 .vehicle-card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    border-color: var(--color-border-glow);
+    box-shadow: var(--glass-shadow), var(--shadow-glow);
+    transform: translateY(-4px);
+}
+
+.vehicle-card:hover::before {
+    opacity: 1;
 }
 
 .vehicle-header {
@@ -64,8 +95,8 @@
 .vehicle-icon {
     width: 48px;
     height: 48px;
-    background: var(--color-bg-secondary);
-    border-radius: var(--radius-md);
+    background: rgba(99, 102, 241, 0.15);
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,7 +116,7 @@
     display: flex;
     justify-content: space-between;
     padding: var(--spacing-sm) 0;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .detail-row:last-child {
@@ -93,13 +124,14 @@
 }
 
 .detail-row .label {
-    color: var(--color-text-secondary);
+    color: var(--color-text-muted);
     font-size: var(--font-size-sm);
 }
 
 .detail-row .value {
     font-weight: 600;
     font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
 }
 
 .vehicle-actions {
@@ -113,6 +145,7 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-xs);
+    border-radius: var(--radius-md);
 }
 
 /* Modal Styles */
@@ -122,22 +155,29 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
     padding: var(--spacing-lg);
+    animation: fadeInUp 0.2s var(--ease-out);
 }
 
 .modal-content {
-    background: var(--color-bg);
-    border-radius: var(--radius-xl);
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-3xl);
     padding: var(--spacing-2xl);
     max-width: 500px;
     width: 100%;
     max-height: 90vh;
     overflow-y: auto;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
 }
 
 .modal-content h2 {

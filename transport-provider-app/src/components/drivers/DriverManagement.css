@@ -1,3 +1,7 @@
+/* ========================================
+   DRIVER MANAGEMENT — DARK PREMIUM DESIGN
+   ======================================== */
+
 .driver-list {
     display: flex;
     flex-direction: column;
@@ -5,15 +9,36 @@
 }
 
 .driver-card {
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-2xl);
     padding: var(--spacing-lg);
     transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.driver-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity var(--transition-base);
 }
 
 .driver-card:hover {
-    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-glow);
+    box-shadow: var(--glass-shadow), var(--shadow-glow);
+}
+
+.driver-card:hover::before {
+    opacity: 1;
 }
 
 .driver-header {
@@ -22,7 +47,7 @@
     align-items: center;
     margin-bottom: var(--spacing-lg);
     padding-bottom: var(--spacing-md);
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .driver-info {
@@ -35,22 +60,24 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    background: var(--gradient-primary);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: var(--font-size-xl);
     font-weight: 700;
+    box-shadow: 0 4px 12px var(--color-primary-glow);
 }
 
 .driver-info h3 {
     font-size: var(--font-size-lg);
     margin: 0;
+    color: var(--color-text-primary);
 }
 
 .driver-email {
-    color: var(--color-text-secondary);
+    color: var(--color-text-muted);
     font-size: var(--font-size-sm);
     margin: 0;
 }
@@ -60,8 +87,9 @@
 }
 
 .invitation-section {
-    background: var(--color-bg-secondary);
-    border-radius: var(--radius-md);
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
     padding: var(--spacing-md);
     display: flex;
     gap: var(--spacing-md);
@@ -75,37 +103,38 @@
 
 .invitation-link code {
     display: block;
-    background: var(--color-bg);
+    background: var(--color-bg-primary);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     padding: var(--spacing-sm);
     font-size: var(--font-size-xs);
     font-family: 'Courier New', monospace;
-    color: var(--color-primary);
+    color: var(--color-primary-light);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .btn-sm.copied {
-    background-color: var(--color-success);
+    background: var(--gradient-success);
     color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .text-success {
-    color: var(--color-success);
+    color: #34d399;
     font-weight: 600;
 }
 
 .text-warning {
-    color: var(--color-warning);
+    color: #fbbf24;
     font-weight: 600;
 }
 
 .btn-delete-icon {
     background: none;
     border: none;
-    color: var(--color-danger);
+    color: #f87171;
     cursor: pointer;
     padding: var(--spacing-xs);
     border-radius: var(--radius-sm);
@@ -116,8 +145,8 @@
 }
 
 .btn-delete-icon:hover {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: #dc2626;
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
 }
 
 @media (max-width: 768px) {
@@ -142,9 +171,9 @@
     padding: 6px 12px;
     font-size: var(--font-size-sm);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    background: var(--color-bg);
-    color: var(--color-text);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
     cursor: pointer;
     min-width: 200px;
     transition: all var(--transition-base);
@@ -157,10 +186,11 @@
 .vehicle-select:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 0 3px var(--color-primary-glow);
 }
 
 .form-help {
     font-size: var(--font-size-xs);
     margin-top: var(--spacing-xs);
+    color: var(--color-text-muted);
 }

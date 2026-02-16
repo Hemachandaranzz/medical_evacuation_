@@ -56,7 +56,8 @@ export const AuthProvider = ({ children }) => {
 
                 setUser(session.user);
 
-                if (session.user.email !== 'finalyearproject2026ddd@gmail.com') {
+                const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
+                if (session.user.email !== adminEmail) {
                     console.warn(`Unauthorized admin access attempt by ${session.user.email}. Logging out.`);
                     await supabase.auth.signOut();
                     if (active) {

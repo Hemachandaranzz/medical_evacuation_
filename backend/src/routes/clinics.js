@@ -77,7 +77,7 @@ router.post('/', authMiddleware, async (req, res) => {
             .from('clinics')
             .upsert([{
                 name,
-                location_name,
+                // location_name removed, mapped to operating_location below
                 operating_location: location_name, // Map to operating_location
                 region_type,
                 facility_level,

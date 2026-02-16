@@ -243,7 +243,7 @@ router.post('/share', async (req, res) => {
             .select(`
                 *,
                 patient:patients(id, name, patient_id, age, gender, blood_type),
-                clinic:clinics(id, name, region),
+                clinic:clinics(id, name, operating_location),
                 hospital:hospitals(id, name, city)
             `)
             .single();

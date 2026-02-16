@@ -1,27 +1,40 @@
 /* ========================================
-   ACTIVE TRIP PAGE - PREMIUM DESIGN
+   ACTIVE TRIP PAGE — DARK PREMIUM DESIGN
    ======================================== */
 
 .active-trip-page {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100dvh;
+    background: var(--color-bg-deep);
     padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    position: relative;
+}
+
+.active-trip-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 300px;
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.05) 0%, transparent 100%);
+    pointer-events: none;
 }
 
 /* ========================================
-   HEADER - STICKY WITH GLASSMORPHISM
+   HEADER — STICKY GLASSMORPHIC
    ======================================== */
 
 .trip-header {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--glass-border);
     padding: 16px 20px;
     display: flex;
     align-items: center;
     gap: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -31,19 +44,20 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-    border: none;
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--color-primary-light);
+    border: 1px solid rgba(16, 185, 129, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
     cursor: pointer;
     transition: all 0.3s ease;
+    min-height: auto;
 }
 
 .btn-back:hover {
-    background: rgba(59, 130, 246, 0.15);
+    background: rgba(16, 185, 129, 0.2);
     transform: translateX(-2px);
 }
 
@@ -55,19 +69,19 @@
     font-size: 20px;
     font-weight: 700;
     margin: 0;
-    color: #0f172a;
+    color: var(--color-text);
     letter-spacing: -0.02em;
 }
 
 .trip-header p {
     font-size: 13px;
-    color: #64748b;
+    color: var(--color-text-tertiary);
     margin: 4px 0 0 0;
     font-weight: 500;
 }
 
 /* ========================================
-   STATUS BANNER - ANIMATED GRADIENT
+   STATUS BANNER — ANIMATED GRADIENT
    ======================================== */
 
 .trip-status-banner {
@@ -115,6 +129,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    position: relative;
 }
 
 .trip-status-banner p {
@@ -122,42 +137,46 @@
     font-weight: 800;
     margin: 4px 0 0 0;
     letter-spacing: -0.01em;
+    position: relative;
 }
 
 /* ========================================
-   DETAIL SECTIONS - MODERN CARDS
+   DETAIL SECTIONS — GLASSMORPHIC CARDS
    ======================================== */
 
 .trip-details {
     padding: 0 16px;
+    position: relative;
+    z-index: 1;
 }
 
 .detail-section {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
     border-radius: 20px;
     padding: 24px;
     margin-bottom: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--glass-shadow);
     transition: all 0.3s ease;
 }
 
 .detail-section:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-border-glow);
+    box-shadow: var(--glass-shadow), var(--shadow-glow);
 }
 
 .detail-section h3 {
     font-size: 18px;
     font-weight: 700;
     margin: 0 0 20px 0;
-    color: #0f172a;
+    color: var(--color-text);
     letter-spacing: -0.02em;
 }
 
 /* ========================================
-   INFO GRID - PATIENT INFORMATION
+   INFO GRID — PATIENT INFORMATION
    ======================================== */
 
 .info-grid {
@@ -171,27 +190,28 @@
     align-items: flex-start;
     gap: 12px;
     padding: 16px;
-    background: rgba(248, 250, 252, 0.5);
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
     border-radius: 12px;
     transition: all 0.3s ease;
 }
 
 .info-item:hover {
-    background: rgba(241, 245, 249, 0.8);
-    transform: translateY(-2px);
+    background: var(--color-bg-hover);
+    border-color: var(--color-border-glow);
 }
 
 .info-item svg {
-    color: #10b981;
+    color: var(--color-primary-light);
     margin-top: 2px;
     flex-shrink: 0;
-    filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.2));
+    filter: drop-shadow(0 2px 4px var(--color-primary-glow));
 }
 
 .info-item .label {
     display: block;
     font-size: 11px;
-    color: #64748b;
+    color: var(--color-text-tertiary);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -202,7 +222,7 @@
     display: block;
     font-size: 15px;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--color-text);
 }
 
 .severity-badge {
@@ -216,41 +236,41 @@
 }
 
 /* ========================================
-   LOCATION CARDS - ENHANCED DESIGN
+   LOCATION CARDS
    ======================================== */
 
 .location-card {
     display: flex;
     gap: 16px;
     padding: 20px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
+    background: rgba(16, 185, 129, 0.06);
     border-radius: 16px;
-    border: 1px solid rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.15);
     transition: all 0.3s ease;
 }
 
 .location-card:hover {
-    border-color: rgba(59, 130, 246, 0.3);
-    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.1);
+    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.1);
 }
 
 .location-card svg {
-    color: #3b82f6;
+    color: var(--color-primary-light);
     flex-shrink: 0;
     margin-top: 2px;
-    filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.2));
+    filter: drop-shadow(0 2px 4px var(--color-primary-glow));
 }
 
 .location-address {
     font-weight: 600;
     margin: 0 0 8px 0;
-    color: #0f172a;
+    color: var(--color-text);
     line-height: 1.5;
 }
 
 .distance-info {
     font-size: 13px;
-    color: #64748b;
+    color: var(--color-text-tertiary);
     margin: 0 0 12px 0;
     font-weight: 500;
 }
@@ -260,7 +280,7 @@
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: var(--gradient-primary);
     color: white;
     border: none;
     border-radius: 10px;
@@ -268,20 +288,20 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 4px 12px var(--color-primary-glow);
+    min-height: auto;
 }
 
 .btn-navigate:hover {
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--color-primary-glow);
 }
 
 .btn-navigate:active {
-    transform: translateY(-1px);
+    transform: scale(0.97);
 }
 
 /* ========================================
-   TIMELINE - PREMIUM VISUAL TREATMENT
+   TIMELINE — PREMIUM DARK
    ======================================== */
 
 .timeline {
@@ -298,7 +318,7 @@
     top: 20px;
     bottom: 20px;
     width: 3px;
-    background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+    background: linear-gradient(180deg, var(--color-border) 0%, rgba(16, 185, 129, 0.2) 100%);
     border-radius: 2px;
 }
 
@@ -312,12 +332,12 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: #f8fafc;
-    border: 3px solid #e2e8f0;
+    background: var(--color-bg-primary);
+    border: 3px solid var(--color-border);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #cbd5e1;
+    color: var(--color-text-tertiary);
     flex-shrink: 0;
     z-index: 1;
     position: relative;
@@ -325,14 +345,14 @@
 }
 
 .timeline-item.completed .timeline-icon {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    border-color: #10b981;
+    background: var(--gradient-success);
+    border-color: var(--color-success);
     color: white;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .timeline-item.active .timeline-icon {
-    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    background: var(--gradient-warning);
     border-color: #f59e0b;
     color: white;
     animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -356,27 +376,27 @@
 .timeline-label {
     font-weight: 700;
     margin: 0 0 6px 0;
-    color: #0f172a;
+    color: var(--color-text);
     font-size: 15px;
 }
 
 .timeline-item.completed .timeline-label {
-    color: #10b981;
+    color: #34d399;
 }
 
 .timeline-item.active .timeline-label {
-    color: #f59e0b;
+    color: #fbbf24;
 }
 
 .timeline-time {
     font-size: 13px;
-    color: #64748b;
+    color: var(--color-text-tertiary);
     margin: 0;
     font-weight: 500;
 }
 
 /* ========================================
-   TRIP ACTIONS - FLOATING BUTTON
+   TRIP ACTIONS — FLOATING BUTTON
    ======================================== */
 
 .trip-actions {
@@ -386,10 +406,10 @@
     right: 0;
     padding: 16px;
     padding-bottom: calc(16px + env(safe-area-inset-bottom));
-    background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.95) 20%, rgba(255, 255, 255, 0.98) 100%);
+    background: linear-gradient(180deg, transparent 0%, rgba(10, 14, 39, 0.95) 30%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .btn-lg {
@@ -417,7 +437,7 @@
     width: 0;
     height: 0;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.2);
     transform: translate(-50%, -50%);
     transition: width 0.6s, height 0.6s;
 }
@@ -428,29 +448,27 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: var(--gradient-primary);
     color: white;
-    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 8px 24px var(--color-primary-glow);
 }
 
 .btn-primary:hover {
-    box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4);
-    transform: translateY(-2px);
+    box-shadow: 0 12px 32px var(--color-primary-glow);
 }
 
 .btn-success {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: var(--gradient-success);
     color: white;
     box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
 }
 
 .btn-success:hover {
     box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
-    transform: translateY(-2px);
 }
 
 .btn-lg:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
     transform: none !important;
 }
@@ -469,24 +487,209 @@
 
 .loading-container {
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    background: var(--color-bg-deep);
 }
 
 .spinner {
     width: 48px;
     height: 48px;
-    border: 4px solid rgba(59, 130, 246, 0.2);
-    border-top-color: #3b82f6;
+    border: 4px solid var(--color-border);
+    border-top-color: var(--color-primary);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
+/* ========================================
+   LIVE MAP — EMBEDDED TRACKING MAP
+   ======================================== */
+
+.trip-map-container {
+    margin: 16px 20px;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    height: 280px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.trip-map-container .leaflet-container {
+    background: #1a1a2e;
+}
+
+/* Custom marker pins */
+.custom-marker {
+    background: transparent !important;
+    border: none !important;
+}
+
+.marker-pin {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+    position: relative;
+}
+
+.marker-pin.pickup {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.marker-pin.destination {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+}
+
+.marker-pin.driver {
+    background: linear-gradient(135deg, #10b981, #059669);
+    width: 44px;
+    height: 44px;
+    border: 3px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Pulse animation for driver marker */
+.pulse-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid #10b981;
+    animation: pulse-ring 2s ease-out infinite;
+    top: 0;
+    left: 0;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Map controls */
+.map-controls {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.map-control-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    min-height: auto;
+}
+
+.map-control-btn:hover,
+.map-control-btn.active {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* Map legend */
+.map-legend {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(16px);
+    border-radius: 10px;
+    padding: 8px 14px;
+    border: 1px solid var(--glass-border);
+    font-size: 12px;
+    color: var(--color-text-secondary);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.legend-dot.pickup {
+    background: #3b82f6;
+}
+
+.legend-dot.dest {
+    background: #ef4444;
+}
+
+.legend-dot.driver {
+    background: #10b981;
+}
+
+.legend-distance {
+    margin-left: auto;
+    font-weight: 600;
+    color: #10b981;
+}
+
+/* GPS Indicator */
+.gps-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.gps-indicator.active {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    animation: gps-pulse 2s ease-in-out infinite;
+}
+
+@keyframes gps-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
     }
 }
 
@@ -515,5 +718,10 @@
     .timeline-icon {
         width: 40px;
         height: 40px;
+    }
+
+    .trip-map-container {
+        margin: 16px 12px;
+        height: 220px;
     }
 }

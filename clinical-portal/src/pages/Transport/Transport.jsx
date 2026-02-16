@@ -14,13 +14,10 @@ import {
     Plus,
 } from 'lucide-react';
 import TransportBookingModal from '../../components/TransportBookingModal/TransportBookingModal';
+import TransportTimeline from '../../components/Transport/TransportTimeline';
 import './Transport.css';
 
-// Initialize Supabase client for real-time subscriptions
-// Note: Fallback key added for immediate functionality during debugging
-const supabaseUrl = 'https://cloatunlfnstvljtsxpy.supabase.co'
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsb2F0dW5sZm5zdHZsanRzeHB5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkyNDMwMjIsImV4cCI6MjA4NDgxOTAyMn0.3F-FWRcKajJX2Mds0m-BdVQhOCuWATXPm2VdMhM0bQQ'
-const supabase = createClient(supabaseUrl, supabaseKey)
+import { supabase } from '../../services/supabaseClient';
 
 export default function Transport() {
     const [bookings, setBookings] = useState([]);
@@ -100,11 +97,14 @@ export default function Transport() {
         let label = booking.booking_status?.replace(/_/g, ' ');
 
         if (activeAssignment && booking.booking_status !== 'completed' && booking.booking_status !== 'cancelled') {
+            console.log(`[Transport] Booking ${booking.id} has active assignment:`, activeAssignment.current_status);
             // If there is an active assignment, use its detailed status
             if (['accepted', 'en_route_pickup', 'patient_loaded', 'en_route_hospital'].includes(activeAssignment.current_status)) {
                 status = activeAssignment.current_status;
                 label = activeAssignment.current_status.replace(/_/g, ' ');
             }
+        } else {
+            console.log(`[Transport] Booking ${booking.id} has NO active assignment or is completed/cancelled.`);
         }
 
         return { status, label };
@@ -241,6 +241,10 @@ export default function Transport() {
                                         <span className={`urgency-badge ${booking.urgency_level}`}>
                                             {booking.urgency_level}
                                         </span>
+                                    )}
+                                    {/* Timeline Visualization for Active Assignments */}
+                                    {booking.assignments?.[0] && booking.booking_status !== 'cancelled' && (
+                                        <TransportTimeline assignment={booking.assignments[0]} />
                                     )}
                                 </div>
                             </div>
