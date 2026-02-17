@@ -56,7 +56,7 @@ function App() {
                 .from('transport_companies')
                 .select('id, is_verified, is_active, company_name')
                 .eq('user_id', userId)
-                .single()
+                .maybeSingle()
 
             if (error || !data) {
                 setNeedsOnboarding(true)

@@ -13,12 +13,14 @@ export default function AppLayout() {
 
     const navItems = [
         { path: '/', label: 'Dashboard', icon: '📊' },
+        { path: '/beds', label: 'Bed Management', icon: '🛏️' },
         { path: '/cases', label: 'Critical Cases', icon: '🚨', danger: true },
     ];
 
     const getPageTitle = () => {
         const path = location.pathname;
         if (path === '/') return 'Dashboard';
+        if (path === '/beds') return 'Bed Management';
         if (path === '/cases') return 'Critical Cases';
         if (path.includes('/case/')) return 'Patient Details';
         return 'Hospital Portal';

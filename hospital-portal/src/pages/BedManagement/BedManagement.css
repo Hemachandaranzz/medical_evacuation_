@@ -1,0 +1,295 @@
+.bed-management-page {
+    padding: 2rem;
+    color: #1e293b;
+    min-height: 100vh;
+    background: #f8fafc;
+}
+
+.bed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.bed-header h1 {
+    font-size: 2rem;
+    margin: 0;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.subtitle {
+    color: #64748b;
+    margin: 0.5rem 0 0 0;
+}
+
+.occupancy-summary {
+    text-align: right;
+    width: 300px;
+}
+
+.occupancy-bar-container {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.occupancy-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0d9488, #059669);
+    transition: width 0.3s ease;
+}
+
+.ward-section {
+    margin-bottom: 2rem;
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.ward-section h3 {
+    color: #475569;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 0.5rem;
+}
+
+.beds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 1.5rem;
+}
+
+.bed-card {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+/* Available State - Green */
+.bed-card.available {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #059669;
+}
+
+.bed-card.available:hover {
+    background: #d1fae5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+    border-color: #34d399;
+}
+
+/* Occupied State - Red */
+.bed-card.occupied {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+}
+
+.bed-card.occupied:hover {
+    background: #fee2e2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+    border-color: #f87171;
+}
+
+.bed-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.bed-number {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.occupied-badge {
+    font-size: 0.65rem;
+    margin-top: 0.4rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.loading-beds {
+    text-align: center;
+    padding: 4rem;
+    color: #64748b;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    color: #64748b;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    .beds-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+}
+
+
+.bed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bed-header h1 {
+    font-size: 2rem;
+    margin: 0;
+    font-weight: 700;
+    color: #e2e8f0;
+}
+
+.subtitle {
+    color: #94a3b8;
+    margin: 0.5rem 0 0 0;
+}
+
+.occupancy-summary {
+    text-align: right;
+    width: 300px;
+}
+
+.occupancy-bar-container {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.occupancy-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4fd1c5, #22d3ee);
+    transition: width 0.3s ease;
+}
+
+.ward-section {
+    margin-bottom: 2rem;
+}
+
+.ward-section h3 {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.beds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+}
+
+.bed-card {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.bed-card.available {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #34d399;
+}
+
+.bed-card.available:hover {
+    background: rgba(16, 185, 129, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.bed-card.occupied {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #f87171;
+}
+
+.bed-card.occupied:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.bed-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.bed-number {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.occupied-badge {
+    font-size: 0.6rem;
+    margin-top: 0.2rem;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.loading-beds {
+    text-align: center;
+    padding: 4rem;
+    color: #94a3b8;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    .beds-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+@media (min-width: 1200px) {
+    .beds-grid {
+        grid-template-columns: repeat(12, 1fr);
+    }
+}

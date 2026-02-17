@@ -18,7 +18,9 @@ export const authMiddleware = async (req, res, next) => {
         const { data: { user }, error } = await supabase.auth.getUser(token);
 
         if (error || !user) {
-            return res.status(401).json({ error: 'Invalid or expired token' });
+            console.error('Safe Auth Debug - getUser error:', error?.message);
+            console.log('Safe Auth Debug - Token received (first 10 chars):', token.slice(0, 10));
+            return res.status(401).json({ error: 'Invalid or expired token', detailed_error: error?.message });
         }
 
         // Fetch clinic_id for this user

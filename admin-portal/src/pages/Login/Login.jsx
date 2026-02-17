@@ -26,7 +26,7 @@ const GoogleIcon = () => (
 );
 
 const Login = () => {
-    const { user, profile, loading, signInWithGoogle, error: authError } = useAuth();
+    const { user, profile, loading, signInWithGoogle, signOut, error: authError } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const location = useLocation();
@@ -99,6 +99,26 @@ const Login = () => {
                 {(error || authError) && (
                     <div className="login-error">
                         {error || authError}
+                        <button
+                            onClick={() => {
+                                signOut();
+                                setError(null);
+                            }}
+                            style={{
+                                display: 'block',
+                                marginTop: '10px',
+                                background: 'transparent',
+                                border: '1px solid currentColor',
+                                color: 'inherit',
+                                padding: '4px 12px',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '0.8rem',
+                                width: '100%'
+                            }}
+                        >
+                            Clear Session & Retry
+                        </button>
                     </div>
                 )}
 

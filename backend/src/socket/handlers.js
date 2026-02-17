@@ -13,6 +13,11 @@ export function setupSocketHandlers(io) {
             console.log(`Socket ${socket.id} joined clinic:${clinicId}`);
         });
 
+        socket.on('join:hospital', (hospitalId) => {
+            socket.join(`hospital:${hospitalId}`);
+            console.log(`Socket ${socket.id} joined hospital:${hospitalId}`);
+        });
+
         socket.on('join:admin', () => {
             socket.join('admin');
             console.log(`Socket ${socket.id} joined admin room`);

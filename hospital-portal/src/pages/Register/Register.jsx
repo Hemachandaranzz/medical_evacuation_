@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './Register.css';
 
 const Register = () => {
-    const { user, registerHospital } = useAuth();
+    const { user, registerHospital, signOut } = useAuth();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
@@ -13,6 +13,8 @@ const Register = () => {
         address: '',
         contact_phone: '',
         facility_type: 'multi_specialty',
+        total_beds: '',
+        specialities: [],
     });
     const [submitting, setSubmitting] = useState(false);
 
@@ -142,6 +144,51 @@ const Register = () => {
                         </div>
                     </div>
 
+
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label htmlFor="total_beds">Total Beds (Capacity) *</label>
+                            <input
+                                type="number"
+                                id="total_beds"
+                                name="total_beds"
+                                value={formData.total_beds}
+                                onChange={handleChange}
+                                placeholder="e.g. 150"
+                                min="1"
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="specialities">Specialities *</label>
+                            <select
+                                id="specialities"
+                                name="specialities"
+                                multiple
+                                value={formData.specialities}
+                                onChange={(e) => {
+                                    const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
+                                    setFormData(prev => ({ ...prev, specialities: selectedValues }));
+                                }}
+                                className="multi-select"
+                                style={{ height: '120px', padding: '8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)', color: '#fff' }}
+                            >
+                                <option value="General">General Medicine</option>
+                                <option value="Cardiac">Cardiology (Heart)</option>
+                                <option value="Renal">Nephrology (Kidney)</option>
+                                <option value="Neurology">Neurology (Brain)</option>
+                                <option value="Oncology">Oncology (Cancer)</option>
+                                <option value="Orthopaedic">Orthopaedics (Bone)</option>
+                                <option value="Paediatric">Paediatrics (Child)</option>
+                                <option value="Maternity">Maternity (Ob/Gyn)</option>
+                                <option value="Trauma">Trauma & Emergency</option>
+                                <option value="Psychiatric">Psychiatry</option>
+                            </select>
+                            <small style={{ color: '#aaa', fontSize: '0.8rem', marginTop: '4px', display: 'block' }}>Hold Ctrl/Cmd to select multiple</small>
+                        </div>
+                    </div>
+
                     <div className="form-info">
                         <span className="info-icon">ℹ️</span>
                         <p>
@@ -161,9 +208,27 @@ const Register = () => {
 
                 <div className="register-footer">
                     <p>Logged in as: {user?.email}</p>
+                    <button
+                        onClick={signOut}
+                        style={{
+                            background: 'none',
+                            border: '1px solid #e5e7eb',
+                            color: '#6b7280',
+                            padding: '4px 12px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            marginLeft: '1rem',
+                            fontSize: '0.8rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                        }}
+                    >
+                        Sign Out
+                    </button>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

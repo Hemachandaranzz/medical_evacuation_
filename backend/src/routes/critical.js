@@ -159,11 +159,15 @@ router.get('/nearby/:clinicId', async (req, res) => {
 
         console.log(`[NEARBY] ✅ Target Regions:`, targetRegions);
 
-        // 3. Get all active hospitals in ANY of the target regions
+        // 3. Get all active active hospitals in ANY of the target regions
         // NOTE: Hospitals use 'region' field, NOT 'operating_location'
-        const { data: hospitals, error: hospError } = await supabase
+        const { data: rawHospitals, error: hospError } = await supabase
             .from('hospitals')
-            .select('id, name, city, facility_type, contact_phone, region, status')
+            .select(`
+                id, name, city, facility_type, contact_phone, region, status,
+                total_beds, specialities,
+                hospital_beds(is_occupied)
+            `)
             .in('region', targetRegions)  // ✅ Query multiple regions
             .eq('status', 'active')
             .order('name');
@@ -172,8 +176,21 @@ router.get('/nearby/:clinicId', async (req, res) => {
             console.log(`[NEARBY] ❌ Hospital Query Error:`, hospError);
             throw hospError;
         }
+
+        // Process hospitals to calculate available beds
+        const hospitals = rawHospitals?.map(h => {
+            const occupiedCount = h.hospital_beds?.filter(b => b.is_occupied).length || 0;
+            return {
+                ...h,
+                hospital_beds: undefined, // Remove the raw beds array to keep response clean
+                available_beds: (h.total_beds || 0) - occupiedCount,
+                total_beds: h.total_beds || 0,
+                specialities: h.specialities || []
+            };
+        });
+
         console.log(`[NEARBY] ✅ Hospitals found: ${hospitals?.length || 0}`);
-        hospitals?.forEach(h => console.log(`   - ${h.name} (${h.region}, ${h.status})`));
+        hospitals?.forEach(h => console.log(`   - ${h.name} (Avl: ${h.available_beds}/${h.total_beds})`));
         console.log(`============================================\n`);
 
         res.json({
@@ -320,6 +337,40 @@ router.post('/acknowledge/:id', async (req, res) => {
             .single();
 
         if (updateError) throw updateError;
+
+        // 5. Automatically assign a bed (Auto-Allocation)
+        // Find the first available bed in the hospital
+        const { data: availableBed, error: bedFetchError } = await supabase
+            .from('hospital_beds')
+            .select('id, bed_number, ward')
+            .eq('hospital_id', criticalCase.target_hospital_id)
+            .eq('is_occupied', false)
+            .order('bed_number', { ascending: true })
+            .limit(1)
+            .maybeSingle();
+
+        if (bedFetchError) {
+            console.error('Error finding available bed:', bedFetchError);
+        } else if (availableBed) {
+            // Assign the bed
+            const { error: bedUpdateError } = await supabase
+                .from('hospital_beds')
+                .update({
+                    is_occupied: true,
+                    patient_id: criticalCase.patient_id,
+                    occupied_since: new Date().toISOString()
+                })
+                .eq('id', availableBed.id);
+
+            if (bedUpdateError) {
+                console.error('Error assigning bed:', bedUpdateError);
+            } else {
+                console.log(`✅ Auto-assigned Bed #${availableBed.bed_number} (${availableBed.ward}) to Patient ${criticalCase.patient_id}`);
+                updatedCase.assigned_bed = availableBed; // Attach to response for UI
+            }
+        } else {
+            console.warn(`⚠️ No beds available for Hospital ${criticalCase.target_hospital_id}`);
+        }
 
         // 5. Emit event to clinic
         if (io) {

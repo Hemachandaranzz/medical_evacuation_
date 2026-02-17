@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { supabase, getCurrentUser } from '../../lib/supabase'
-import { Building2, Truck, User, CheckCircle } from 'lucide-react'
+import { supabase, getCurrentUser, signOut } from '../../lib/supabase'
+import { Building2, Truck, User, CheckCircle, LogOut } from 'lucide-react'
 import './OnboardingWizard.css'
 
 // Operating locations
@@ -146,8 +146,28 @@ export default function OnboardingWizard({ onComplete }) {
         <div className="onboarding-page">
             <div className="onboarding-container">
                 <div className="onboarding-header">
-                    <h1>Welcome to Transport Provider Portal</h1>
-                    <p>Let's set up your company profile</p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
+                        <div>
+                            <h1>Welcome to Transport Provider Portal</h1>
+                            <p>Let's set up your company profile</p>
+                        </div>
+                        <button
+                            onClick={() => signOut()}
+                            style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#64748b',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                padding: '8px'
+                            }}
+                        >
+                            <LogOut size={18} />
+                            Sign Out
+                        </button>
+                    </div>
                 </div>
 
                 <div className="progress-bar">

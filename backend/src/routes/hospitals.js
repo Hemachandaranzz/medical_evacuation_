@@ -174,4 +174,24 @@ router.get('/stats', authMiddleware, async (req, res) => {
     }
 });
 
+// Get all beds for a hospital
+router.get('/:id/beds', authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const { data, error } = await supabase
+            .from('hospital_beds')
+            .select('*')
+            .eq('hospital_id', id)
+            .order('bed_number', { ascending: true });
+
+        if (error) throw error;
+
+        res.json(data || []);
+    } catch (error) {
+        console.error('Error fetching hospital beds:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 export default router;

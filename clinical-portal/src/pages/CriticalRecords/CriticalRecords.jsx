@@ -242,10 +242,23 @@ const CriticalRecords = () => {
                                     >
                                         <div className="hospital-icon">🏥</div>
                                         <div className="hospital-info">
-                                            <div className="hospital-name">{hospital.name}</div>
+                                            <div className="hospital-header-row">
+                                                <div className="hospital-name">{hospital.name}</div>
+                                                <div className={`bed-badge ${hospital.available_beds === 0 ? 'full' : hospital.available_beds < 5 ? 'critical' : 'available'}`}>
+                                                    🛏️ {hospital.available_beds} / {hospital.total_beds}
+                                                </div>
+                                            </div>
                                             <div className="hospital-meta">
                                                 {hospital.city} • {hospital.facility_type?.replace('_', ' ')}
                                             </div>
+                                            {hospital.specialities && hospital.specialities.length > 0 && (
+                                                <div className="hospital-specs">
+                                                    {hospital.specialities.slice(0, 3).map((spec, i) => (
+                                                        <span key={i} className="spec-tag">{spec.replace('_', ' ')}</span>
+                                                    ))}
+                                                    {hospital.specialities.length > 3 && <span className="spec-more">+{hospital.specialities.length - 3}</span>}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))

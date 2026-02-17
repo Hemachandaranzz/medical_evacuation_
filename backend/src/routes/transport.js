@@ -293,6 +293,9 @@ router.patch('/driver/status', authenticateDriver, async (req, res) => {
 
         if (error) throw error;
 
+        // Emit socket event
+        req.io?.emit('driver:updated', { driverId: req.driver.id, status });
+
         res.json({ driver: data });
     } catch (error) {
         console.error('Update status error:', error);

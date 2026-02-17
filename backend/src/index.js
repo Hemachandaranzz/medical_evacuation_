@@ -104,6 +104,8 @@ app.use('/api/hospitals', hospitalsRouter);
 app.use('/api/critical', criticalRouter);
 app.use('/api/transport', transportRouter);
 app.use('/api/bookings', bookingsRouter);
+import bedsRouter from './routes/beds.js';
+app.use('/api/beds', bedsRouter);
 
 // ==========================================
 // ⚠️ Error Handling

@@ -8,6 +8,7 @@ import Pending from './pages/Pending/Pending';
 import Dashboard from './pages/Dashboard/Dashboard';
 import CriticalCases from './pages/CriticalCases/CriticalCases';
 import PatientDetail from './pages/PatientDetail/PatientDetail';
+import BedManagement from './pages/BedManagement/BedManagement';
 import PatientCase from './pages/PatientCase/PatientCase';
 import './index.css';
 
@@ -83,6 +84,8 @@ function AppRoutes() {
       }>
         <Route index element={<Dashboard />} />
         <Route path="cases" element={<CriticalCases />} />
+        <Route path="beds" element={<BedManagement />} />
+        <Route path="patient/:patientId" element={<PatientDetail />} />
         <Route path="patient/:patientId" element={<PatientDetail />} />
         <Route path="case/:caseId" element={<PatientCase />} />
       </Route>

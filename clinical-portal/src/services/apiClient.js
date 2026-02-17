@@ -14,6 +14,12 @@ export const api = {
             const { data: { session } } = await supabase.auth.getSession();
             const token = session?.access_token;
 
+            console.log('API Debug - Requesting:', endpoint);
+            console.log('API Debug - Session User:', session?.user?.id);
+            console.log('API Debug - Token (first 10):', token ? token.slice(0, 10) : 'NONE');
+            console.log('API Debug - Expires At:', session?.expires_at ? new Date(session.expires_at * 1000).toLocaleString() : 'N/A');
+
+
             const response = await fetch(`${API_URL}${endpoint}`, {
                 ...options,
                 signal: controller.signal,

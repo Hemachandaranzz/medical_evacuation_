@@ -179,6 +179,10 @@ const Dashboard = () => {
                             <span className="action-icon evac">🚨</span>
                             <span className="action-label">View Cases</span>
                         </Link>
+                        <Link to="/beds" className="quick-action-card">
+                            <span className="action-icon" style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#34d399' }}>🛏️</span>
+                            <span className="action-label">Manage Beds</span>
+                        </Link>
                         {/* Placeholder for future actions */}
                         <div className="quick-action-card">
                             <span className="action-icon records">📊</span>

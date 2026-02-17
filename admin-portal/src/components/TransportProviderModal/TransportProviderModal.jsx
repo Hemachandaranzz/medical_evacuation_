@@ -43,6 +43,28 @@ const TransportProviderModal = ({ isOpen, onClose, provider }) => {
         }
     };
 
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleDriverUpdate = (data) => {
+            setDrivers(prev => prev.map(driver =>
+                driver.id === data.driverId
+                    ? { ...driver, current_status: data.status, is_online: data.status === 'available' }
+                    : driver
+            ));
+        };
+
+        const socketInstance = import('../../services/socketClient').then(({ socket }) => {
+            socket.on('driver:updated', handleDriverUpdate);
+        });
+
+        return () => {
+            import('../../services/socketClient').then(({ socket }) => {
+                socket.off('driver:updated', handleDriverUpdate);
+            });
+        };
+    }, [isOpen]);
+
     if (!isOpen || !provider) return null;
 
     const formatDate = (dateString) => {
