@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import TransportBookingModal from '../../components/TransportBookingModal/TransportBookingModal';
 import TransportTimeline from '../../components/Transport/TransportTimeline';
+import LiveDriverMap from '../../components/LiveDriverMap/LiveDriverMap';
 import './Transport.css';
 
 import { supabase } from '../../services/supabaseClient';
@@ -25,6 +26,7 @@ export default function Transport() {
     const [loading, setLoading] = useState(true);
     const [showBookingModal, setShowBookingModal] = useState(false);
     const [clinicRegion, setClinicRegion] = useState('');
+    const [trackingBookingId, setTrackingBookingId] = useState(null);
     const location = useLocation();
 
     useEffect(() => {
@@ -246,7 +248,28 @@ export default function Transport() {
                                     {booking.assignments?.[0] && booking.booking_status !== 'cancelled' && (
                                         <TransportTimeline assignment={booking.assignments[0]} />
                                     )}
+
+                                    {/* Track Driver Button */}
+                                    {booking.assignments?.[0] && ['accepted', 'en_route_pickup', 'patient_loaded', 'en_route_hospital'].includes(booking.assignments[0].current_status) && (
+                                        <button
+                                            className="track-driver-btn"
+                                            onClick={() => setTrackingBookingId(
+                                                trackingBookingId === booking.assignments[0].id ? null : booking.assignments[0].id
+                                            )}
+                                        >
+                                            <MapPin size={14} />
+                                            {trackingBookingId === booking.assignments[0].id ? 'Hide Map' : 'Track Driver'}
+                                        </button>
+                                    )}
                                 </div>
+
+                                {/* Live Map — shown below the card footer */}
+                                {trackingBookingId === booking.assignments?.[0]?.id && (
+                                    <LiveDriverMap
+                                        bookingId={trackingBookingId}
+                                        onClose={() => setTrackingBookingId(null)}
+                                    />
+                                )}
                             </div>
                         );
                     })}

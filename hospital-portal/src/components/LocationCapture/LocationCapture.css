@@ -1,0 +1,184 @@
+.location-capture-banner {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(100, 180, 255, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.location-capture-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.location-capture-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.location-capture-header h4 {
+    margin: 0;
+    color: #e0e0e0;
+    font-size: 1rem;
+}
+
+.location-capture-header p {
+    margin: 4px 0 0;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+}
+
+.location-icon {
+    font-size: 1.3rem;
+    margin-top: 2px;
+}
+
+.location-dismiss-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.location-dismiss-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.location-options {
+    display: flex;
+    gap: 12px;
+}
+
+.location-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.location-option-btn.primary {
+    background: linear-gradient(135deg, #2196f3, #1976d2);
+    color: white;
+}
+
+.location-option-btn.primary:hover {
+    background: linear-gradient(135deg, #42a5f5, #2196f3);
+}
+
+.location-option-btn.secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: #b0bec5;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.location-option-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+}
+
+.location-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.location-inputs {
+    display: flex;
+    gap: 12px;
+}
+
+.location-input-group {
+    flex: 1;
+}
+
+.location-input-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 4px;
+}
+
+.location-input-group input {
+    width: 100%;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: white;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.location-input-group input:focus {
+    border-color: #2196f3;
+}
+
+.location-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.location-save-btn {
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #4caf50, #388e3c);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.location-save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.location-cancel-btn {
+    padding: 8px 16px;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.location-success {
+    color: #66bb6a;
+    font-weight: 500;
+}
+
+.location-error {
+    color: #ef5350;
+    font-size: 0.85rem;
+    margin: 0;
+}

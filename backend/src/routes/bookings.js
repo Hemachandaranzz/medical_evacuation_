@@ -294,8 +294,15 @@ router.get('/clinic', clinicAuth, async (req, res) => {
 
                 if (booking.driver_id && assignments.length > 0) {
                     // Find assignment for this driver
-                    // We assume a driver has only ONE active assignment at a time
-                    const match = assignments.find(a => a.driver_id === booking.driver_id);
+                    // We prioritize exact match on transport_booking_id, falling back to driver_id for legacy data
+                    const match = assignments.find(a => {
+                        if (a.transport_booking_id) {
+                            return a.transport_booking_id === booking.id;
+                        }
+                        // Legacy: Only match by driver_id if this assignment is NOT linked to another booking
+                        return a.driver_id === booking.driver_id;
+                    });
+
                     if (match) {
                         console.log(`[GET /bookings/clinic] Linking booking ${booking.id} to assignment ${match.id} (Status: ${match.current_status})`);
                         booking.assignments = [match];
@@ -409,6 +416,38 @@ router.post('/', clinicAuth, async (req, res) => {
             evacuationId = existingEvacuation.id;
         }
 
+        // Auto-populate coordinates from clinic/hospital if not provided by frontend
+        let finalPickupLat = pickup_latitude || null;
+        let finalPickupLng = pickup_longitude || null;
+        let finalDestLat = destination_latitude || null;
+        let finalDestLng = destination_longitude || null;
+
+        // Get clinic coordinates for pickup
+        if (!finalPickupLat || !finalPickupLng) {
+            const { data: clinic } = await supabase
+                .from('clinics')
+                .select('latitude, longitude')
+                .eq('id', req.clinicId)
+                .single();
+            if (clinic?.latitude && clinic?.longitude) {
+                finalPickupLat = clinic.latitude;
+                finalPickupLng = clinic.longitude;
+            }
+        }
+
+        // Try to get destination hospital coordinates from destination_location name match
+        if (!finalDestLat || !finalDestLng) {
+            const { data: hospital } = await supabase
+                .from('hospitals')
+                .select('latitude, longitude')
+                .ilike('name', `%${destination_location}%`)
+                .maybeSingle();
+            if (hospital?.latitude && hospital?.longitude) {
+                finalDestLat = hospital.latitude;
+                finalDestLng = hospital.longitude;
+            }
+        }
+
         // Create booking
         const { data: booking, error: bookingError } = await supabase
             .from('transport_bookings')
@@ -422,10 +461,10 @@ router.post('/', clinicAuth, async (req, res) => {
                 recommended_vehicle_type: recommendedType,
                 pickup_location,
                 destination_location,
-                pickup_latitude,
-                pickup_longitude,
-                destination_latitude,
-                destination_longitude,
+                pickup_latitude: finalPickupLat,
+                pickup_longitude: finalPickupLng,
+                destination_latitude: finalDestLat,
+                destination_longitude: finalDestLng,
                 urgency: urgency || 'medium',
                 special_requirements,
                 notes,

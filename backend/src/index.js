@@ -24,6 +24,7 @@ import hospitalsRouter from './routes/hospitals.js';
 import criticalRouter from './routes/critical.js';
 import transportRouter from './routes/transport.js';
 import bookingsRouter from './routes/bookings.js';
+import locationRouter from './routes/location.js';
 
 const app = express();
 const httpServer = createServer(app);
@@ -40,9 +41,24 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
         'https://island-driver-app.vercel.app'
     ];
 
+const corsOriginHelper = (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    // Check allowed list
+    if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true);
+
+    // Allow Visual Studio Code Dev Tunnels
+    if (origin.endsWith('.devtunnels.ms')) return callback(null, true);
+
+    // Block others
+    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    return callback(new Error(msg), false);
+};
+
 const io = new Server(httpServer, {
     cors: {
-        origin: allowedOrigins,
+        origin: corsOriginHelper,
         methods: ['GET', 'POST', 'PATCH', 'DELETE'],
         credentials: true
     }
@@ -104,6 +120,7 @@ app.use('/api/hospitals', hospitalsRouter);
 app.use('/api/critical', criticalRouter);
 app.use('/api/transport', transportRouter);
 app.use('/api/bookings', bookingsRouter);
+app.use('/api/location', locationRouter);
 import bedsRouter from './routes/beds.js';
 app.use('/api/beds', bedsRouter);
 

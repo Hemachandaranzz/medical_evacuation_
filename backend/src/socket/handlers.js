@@ -23,6 +23,32 @@ export function setupSocketHandlers(io) {
             console.log(`Socket ${socket.id} joined admin room`);
         });
 
+        // Location Feature: Join a booking-specific room for live driver tracking
+        socket.on('join_booking_room', ({ bookingId }) => {
+            if (bookingId) {
+                socket.join(`booking:${bookingId}`);
+                console.log(`🗺️ Socket ${socket.id} joined booking:${bookingId}`);
+            }
+        });
+
+        socket.on('leave_booking_room', ({ bookingId }) => {
+            if (bookingId) {
+                socket.leave(`booking:${bookingId}`);
+                console.log(`🗺️ Socket ${socket.id} left booking:${bookingId}`);
+            }
+        });
+
+        // Location Feature: Admin live map room (sees all driver pings)
+        socket.on('join_admin_live_map', () => {
+            socket.join('admin:live_map');
+            console.log(`🗺️ Socket ${socket.id} joined admin:live_map`);
+        });
+
+        socket.on('leave_admin_live_map', () => {
+            socket.leave('admin:live_map');
+            console.log(`🗺️ Socket ${socket.id} left admin:live_map`);
+        });
+
         // Handle disconnect
         socket.on('disconnect', (reason) => {
             console.log(`🔌 Client disconnected: ${socket.id} (${reason})`);

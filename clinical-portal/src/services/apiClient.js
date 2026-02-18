@@ -64,4 +64,9 @@ export const api = {
     }),
 
     delete: (endpoint) => api.request(endpoint, { method: 'DELETE' }),
+
+    put: (endpoint, body) => api.request(endpoint, {
+        method: 'PUT',
+        body: JSON.stringify(body),
+    }),
 };

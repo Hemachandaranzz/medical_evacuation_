@@ -1,0 +1,133 @@
+.incoming-tracker {
+    background: #1a1a2e;
+    border: 1px solid rgba(100, 180, 255, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 12px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.tracker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tracker-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #e0e0e0;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.eta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.eta-far {
+    background: rgba(76, 175, 80, 0.15);
+    color: #66bb6a;
+}
+
+.eta-mid {
+    background: rgba(255, 167, 38, 0.15);
+    color: #ffa726;
+}
+
+.eta-close {
+    background: rgba(239, 83, 80, 0.15);
+    color: #ef5350;
+    animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.tracker-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.tracker-close:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.tracker-map {
+    width: 100%;
+    height: 280px;
+    background: #0d1117;
+}
+
+.tracker-waiting,
+.tracker-loading {
+    padding: 10px 14px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.82rem;
+}
+
+/* Custom markers */
+.custom-marker {
+    background: none !important;
+    border: none !important;
+}
+
+.marker-dot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.marker-dot.driver-pulse {
+    animation: pulse-bounce 2s infinite;
+    font-size: 1.3rem;
+}
+
+@keyframes pulse-bounce {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}

@@ -4,6 +4,7 @@ import { supabase } from '../../services/supabaseClient';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import './Dashboard.css';
+import LocationCapture from '../../components/LocationCapture/LocationCapture';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
@@ -80,6 +81,9 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard-premium">
+            {/* Location Capture — invisible if hospital coordinates already saved */}
+            <LocationCapture hospital={hospital} />
+
             {/* Header */}
             <div className="dashboard-header-premium">
                 <div>

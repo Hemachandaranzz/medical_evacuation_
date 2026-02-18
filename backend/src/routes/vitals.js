@@ -40,8 +40,8 @@ const VITAL_CONFIG = {
         label: 'BP Diastolic'
     },
     temperature: {
-        min: 94, max: 106,
-        ideal: [97, 99],
+        min: 34.0, max: 42.0,
+        ideal: [36.1, 37.2],
         weight: 0.10,
         label: 'Temperature'
     }

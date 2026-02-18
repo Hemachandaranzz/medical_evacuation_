@@ -1,0 +1,180 @@
+.map-view-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    background: #0d1117;
+    display: flex;
+    flex-direction: column;
+}
+
+.map-view-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.1rem;
+    background: #0d1117;
+}
+
+.map-view-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(15, 23, 42, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 10;
+}
+
+.map-back-btn {
+    background: none;
+    border: none;
+    color: #64b5f6;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.map-view-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+}
+
+.gps-dot {
+    color: #4caf50;
+    font-size: 0.7rem;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+.map-view-canvas {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+}
+
+.map-view-bottom {
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.eta-display {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.eta-time {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+}
+
+.eta-distance {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.map-view-actions {
+    margin-bottom: 10px;
+}
+
+.open-maps-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #2196f3, #1976d2);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.open-maps-btn:hover {
+    background: linear-gradient(135deg, #42a5f5, #2196f3);
+    transform: translateY(-1px);
+}
+
+.map-trip-info {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.82rem;
+    text-transform: capitalize;
+}
+
+.map-trip-info strong {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Custom map markers */
+.map-marker {
+    background: none !important;
+    border: none !important;
+}
+
+.pin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.pin.pickup {
+    background: #4caf50;
+    border: 2px solid white;
+}
+
+.pin.dropoff {
+    background: #f44336;
+    border: 2px solid white;
+}
+
+.pin.driver {
+    background: rgba(33, 150, 243, 0.2);
+    border: 2px solid #2196f3;
+    width: 32px;
+    height: 32px;
+    font-size: 1.2rem;
+    animation: driver-pulse 2s infinite;
+}
+
+@keyframes driver-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 12px rgba(33, 150, 243, 0);
+    }
+}

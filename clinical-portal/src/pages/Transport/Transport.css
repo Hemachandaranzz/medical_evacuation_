@@ -221,3 +221,26 @@
     background: hsla(0, 80%, 58%, 0.15);
     color: var(--color-danger);
 }
+
+/* Track Driver Button */
+.track-driver-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 6px 14px;
+    background: rgba(33, 150, 243, 0.12);
+    color: #64b5f6;
+    border: 1px solid rgba(33, 150, 243, 0.25);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.track-driver-btn:hover {
+    background: rgba(33, 150, 243, 0.2);
+    border-color: rgba(33, 150, 243, 0.4);
+    transform: translateY(-1px);
+}

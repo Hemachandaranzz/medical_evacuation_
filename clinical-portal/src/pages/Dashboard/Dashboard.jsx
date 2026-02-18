@@ -14,6 +14,7 @@ import {
     FileText,
 } from 'lucide-react';
 import './Dashboard.css';
+import LocationCapture from '../../components/LocationCapture/LocationCapture';
 
 export default function Dashboard() {
     const [stats, setStats] = useState({
@@ -49,6 +50,12 @@ export default function Dashboard() {
 
     return (
         <div className="dashboard-premium">
+            {/* Location Capture — invisible if clinic coordinates already saved */}
+            <LocationCapture
+                endpoint="/location/clinic"
+                checkEndpoint="/clinics/me"
+            />
+
             {/* Header */}
             <div className="dashboard-header-premium">
                 <div>

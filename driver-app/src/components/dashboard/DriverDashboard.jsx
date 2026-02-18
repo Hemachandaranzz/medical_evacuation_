@@ -106,10 +106,10 @@ export default function DriverDashboard({ driver, onUpdate }) {
             // Check for active trip
             const { data: activeTrip } = await supabase
                 .from('transport_assignments')
-                .select('*, transport_requests(*)')
+                .select('*, transport_requests(*), transport_bookings(*)')
                 .eq('driver_id', driver.id)
                 .in('current_status', ['accepted', 'en_route_pickup', 'patient_loaded', 'en_route_hospital'])
-                .single()
+                .maybeSingle()
 
             // FETCH PENDING REQUESTS (Available for acceptance)
             // 1. Get company ID content
@@ -123,11 +123,12 @@ export default function DriverDashboard({ driver, onUpdate }) {
                     .eq('status', 'pending')
 
                 // Get pending transport_bookings from clinics for this company
+                // SELECT urgency, patient(patient_id)
                 const { data: pendingBookings } = await supabase
                     .from('transport_bookings')
                     .select(`
                         *,
-                        patient:patients(name),
+                        patient:patients(name, patient_id),
                         clinic:clinics(name, location_name)
                     `)
                     .eq('company_id', driver.company_id)
@@ -138,12 +139,13 @@ export default function DriverDashboard({ driver, onUpdate }) {
                 const formattedBookings = (pendingBookings || []).map(b => ({
                     id: b.id,
                     status: 'pending',
-                    severity_level: b.urgency_level || 'routine',
+                    severity_level: b.urgency || b.urgency_level || 'routine', // Check both columns
                     pickup_address: b.pickup_location,
                     destination_address: b.destination_location,
                     created_at: b.created_at,
                     isBooking: true, // Flag to distinguish
                     patient_name: b.patient?.name,
+                    patient_id: b.patient?.patient_id, // Pass the human-readable ID
                     clinic_name: b.clinic?.name
                 }))
 
@@ -189,7 +191,14 @@ export default function DriverDashboard({ driver, onUpdate }) {
                         patient_reference_id: request.patient_id || 'UNKNOWN',
 
                         // Map 'routine' to 'non_urgent' to satisfy severity_enum ('critical', 'urgent', 'stable', 'non_urgent')
-                        severity_level: (request.severity_level === 'routine' ? 'non_urgent' : request.severity_level) || 'non_urgent',
+                        severity_level: (() => {
+                            const val = (request.severity_level || 'non_urgent').toLowerCase();
+                            if (val === 'routine' || val === 'low' || val === 'non_urgent') return 'non_urgent';
+                            if (val === 'medium' || val === 'stable') return 'stable'; // OR 'urgent' depending on preference. mapping medium -> stable.
+                            if (val === 'urgent' || val === 'high') return 'urgent';
+                            if (val === 'critical' || val === 'emergency') return 'critical';
+                            return 'non_urgent'; // Fallback
+                        })(),
 
                         // Map vehicle type if needed, strict enum: 'helicopter', 'ambulance', 'boat', 'land_ambulance', 'other'
                         required_transport_type: 'ambulance', // Default for now, ideally map from request.recommended_vehicle_type
@@ -218,7 +227,8 @@ export default function DriverDashboard({ driver, onUpdate }) {
                     current_status: 'accepted',
                     accepted_at: new Date().toISOString(),
                     // Link to the request/booking (now guaranteed to be a valid request_id)
-                    request_id: requestIdToUse
+                    request_id: requestIdToUse,
+                    transport_booking_id: request.isBooking ? request.id : null
                 })
                 .select()
                 .single()

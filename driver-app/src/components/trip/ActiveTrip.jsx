@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { MapPin, Navigation, AlertCircle, CheckCircle, ArrowLeft, Clock, User } from 'lucide-react'
+import { MapPin, Navigation, AlertCircle, CheckCircle, ArrowLeft, Clock, User, Map } from 'lucide-react'
 import { formatDateTime, calculateDistance } from '../../lib/utils'
+import MapView from './MapView'
 import './ActiveTrip.css'
 
 export default function ActiveTrip({ driver }) {
@@ -12,6 +13,7 @@ export default function ActiveTrip({ driver }) {
     const [request, setRequest] = useState(null)
     const [loading, setLoading] = useState(true)
     const [updating, setUpdating] = useState(false)
+    const [showMap, setShowMap] = useState(false)
 
     useEffect(() => {
         loadTrip()
@@ -50,6 +52,17 @@ export default function ActiveTrip({ driver }) {
 
             let requestData = null
 
+            let pickupLat = null
+            let pickupLng = null
+            let destLat = null
+            let destLng = null
+            let pickupAddress = ''
+            let destinationAddress = ''
+            let patientRef = ''
+            let severity = 'routine'
+            let createdAt = ''
+            let requestId = ''
+
             // Handle request linked via request_id (Legacy/API)
             if (assignmentData.request_id) {
                 const { data, error } = await supabase
@@ -59,36 +72,96 @@ export default function ActiveTrip({ driver }) {
                     .single()
 
                 if (error) throw error
-                requestData = data
+
+                // Initial values from request table
+                pickupLat = data.pickup_latitude
+                pickupLng = data.pickup_longitude
+                destLat = data.destination_latitude
+                destLng = data.destination_longitude
+                pickupAddress = data.pickup_address
+                destinationAddress = data.destination_address
+                patientRef = data.patient_reference_id
+                severity = data.severity_level
+                createdAt = data.created_at
+                requestId = data.id
             }
             // Handle request linked via booking_id (Clinical Portal)
-            else if (assignmentData.booking_id) {
+            else if (assignmentData.booking_id || assignmentData.transport_booking_id) {
+                const bookingId = assignmentData.booking_id || assignmentData.transport_booking_id
                 const { data, error } = await supabase
                     .from('transport_bookings')
-                    .select(`
-                        *,
-                        patient:patients(*)
-                    `)
-                    .eq('id', assignmentData.booking_id)
+                    .select(`*, patient:patients(*)`)
+                    .eq('id', bookingId)
                     .single()
 
                 if (error) throw error
 
-                // Normalizing booking data to match transport_request structure
-                requestData = {
-                    id: data.id,
-                    patient_reference_id: data.patient?.patient_id || 'N/A',
-                    severity_level: data.urgency_level || 'routine',
-                    pickup_address: data.pickup_location,
-                    pickup_latitude: data.origin_lat || 0, // Fallback if lat/lng not in bookings
-                    pickup_longitude: data.origin_lng || 0,
-                    destination_address: data.destination_location,
-                    destination_latitude: data.dest_lat || 0,
-                    destination_longitude: data.dest_lng || 0,
-                    created_at: data.created_at
-                }
+                // Initial values from booking table
+                pickupLat = data.pickup_latitude
+                pickupLng = data.pickup_longitude
+                destLat = data.destination_latitude
+                destLng = data.destination_longitude
+                pickupAddress = data.pickup_location
+                destinationAddress = data.destination_location
+                patientRef = data.patient?.patient_id || 'N/A'
+                severity = data.urgency_level || data.urgency || 'routine'
+                createdAt = data.created_at
+                requestId = data.id
             } else {
                 console.warn('Assignment has no request_id or booking_id')
+            }
+
+            // ALWAYS Fetch real coordinates from backend API (bypasses RLS, joins clinic/hospital tables)
+            // This fixes issues where local tables have 0.0 or null coordinates
+            try {
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+                const { data: { session } } = await supabase.auth.getSession()
+                const token = session?.access_token
+
+                console.log('Fetching location for trip:', tripId);
+                const locRes = await fetch(`${API_URL}/location/booking/${tripId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+
+                if (locRes.ok) {
+                    const locData = await locRes.json()
+                    console.log('Location API Response:', locData);
+
+                    // Override if API provides valid coordinates
+                    if (locData.pickup?.latitude && locData.pickup?.longitude) {
+                        pickupLat = locData.pickup.latitude
+                        pickupLng = locData.pickup.longitude
+                    }
+                    if (locData.dropoff?.latitude && locData.dropoff?.longitude) {
+                        destLat = locData.dropoff.latitude
+                        destLng = locData.dropoff.longitude
+                    }
+
+                    // Override Patient & Severity from Backend (Bypasses RLS)
+                    if (locData.booking?.patient) {
+                        patientRef = locData.booking.patient.patient_id || 'N/A'
+                    }
+                    if (locData.booking?.urgency || locData.booking?.urgency_level) {
+                        severity = locData.booking.urgency || locData.booking.urgency_level
+                    }
+                } else {
+                    console.error('Location API failed:', locRes.status, await locRes.text());
+                }
+            } catch (locErr) {
+                console.error('Could not fetch location data from API:', locErr.message)
+            }
+
+            requestData = {
+                id: requestId,
+                patient_reference_id: patientRef,
+                severity_level: severity,
+                pickup_address: pickupAddress,
+                pickup_latitude: pickupLat,
+                pickup_longitude: pickupLng,
+                destination_address: destinationAddress,
+                destination_latitude: destLat,
+                destination_longitude: destLng,
+                created_at: createdAt
             }
 
             if (!requestData) throw new Error('No associated request or booking found')
@@ -220,6 +293,10 @@ export default function ActiveTrip({ driver }) {
         request.destination_longitude
     )
 
+    if (showMap) {
+        return <MapView assignment={assignment} driver={driver} onClose={() => setShowMap(false)} />
+    }
+
     return (
         <div className="active-trip-page">
             <header className="trip-header">
@@ -230,6 +307,10 @@ export default function ActiveTrip({ driver }) {
                     <h2>Active Trip</h2>
                     <p>Trip #{assignment.id.slice(0, 8)}</p>
                 </div>
+                <button className="btn-map-toggle" onClick={() => setShowMap(true)}>
+                    <Map size={18} />
+                    Map
+                </button>
             </header>
 
             <div className="trip-status-banner">
@@ -256,12 +337,15 @@ export default function ActiveTrip({ driver }) {
                             <div>
                                 <span className="label">Severity</span>
                                 <span className="value severity-badge"
-                                    style={{
-                                        backgroundColor: request.severity_level === 'critical' ? '#fee2e2' : '#fef3c7',
-                                        color: request.severity_level === 'critical' ? '#991b1b' : '#92400e'
-                                    }}
+                                    style={(() => {
+                                        const level = (request.severity_level || 'non_urgent').toLowerCase();
+                                        if (level === 'critical' || level === 'emergency') return { backgroundColor: '#fee2e2', color: '#991b1b' }; // Red
+                                        if (level === 'urgent' || level === 'high') return { backgroundColor: '#ffedd5', color: '#9a3412' }; // Orange
+                                        if (level === 'stable' || level === 'medium') return { backgroundColor: '#d1fae5', color: '#065f46' }; // Green
+                                        return { backgroundColor: '#dbeafe', color: '#1e40af' }; // Blue (Non-urgent/Routine)
+                                    })()}
                                 >
-                                    {request.severity_level.toUpperCase()}
+                                    {(request.severity_level || 'UNKNOWN').toUpperCase()}
                                 </span>
                             </div>
                         </div>
@@ -274,8 +358,22 @@ export default function ActiveTrip({ driver }) {
                         <MapPin size={20} />
                         <div>
                             <p className="location-address">{request.pickup_address}</p>
+                            {request.pickup_latitude && request.pickup_longitude ? (
+                                <p className="location-coords" style={{ fontSize: '12px', color: '#4ade80', marginTop: '4px' }}>
+                                    📍 {Number(request.pickup_latitude).toFixed(6)}, {Number(request.pickup_longitude).toFixed(6)}
+                                </p>
+                            ) : (
+                                <p className="location-coords" style={{ fontSize: '12px', color: '#f59e0b', marginTop: '4px' }}>
+                                    ⚠️ Clinic coordinates not set — navigating by address
+                                </p>
+                            )}
                             <button className="btn-navigate" onClick={() => {
-                                window.open(`https://www.google.com/maps/dir/?api=1&destination=${request.pickup_latitude},${request.pickup_longitude}`, '_blank')
+                                const hasCoords = request.pickup_latitude && request.pickup_longitude &&
+                                    request.pickup_latitude !== 0 && request.pickup_longitude !== 0;
+                                const destination = hasCoords
+                                    ? `${request.pickup_latitude},${request.pickup_longitude}`
+                                    : encodeURIComponent(request.pickup_address);
+                                window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination}`, '_blank')
                             }}>
                                 <Navigation size={16} />
                                 Navigate
@@ -290,9 +388,23 @@ export default function ActiveTrip({ driver }) {
                         <MapPin size={20} />
                         <div>
                             <p className="location-address">{request.destination_address}</p>
+                            {request.destination_latitude && request.destination_longitude ? (
+                                <p className="location-coords" style={{ fontSize: '12px', color: '#4ade80', marginTop: '4px' }}>
+                                    📍 {Number(request.destination_latitude).toFixed(6)}, {Number(request.destination_longitude).toFixed(6)}
+                                </p>
+                            ) : (
+                                <p className="location-coords" style={{ fontSize: '12px', color: '#f59e0b', marginTop: '4px' }}>
+                                    ⚠️ Hospital coordinates not set — navigating by address
+                                </p>
+                            )}
                             <p className="distance-info">~{distance.toFixed(1)} km from pickup</p>
                             <button className="btn-navigate" onClick={() => {
-                                window.open(`https://www.google.com/maps/dir/?api=1&destination=${request.destination_latitude},${request.destination_longitude}`, '_blank')
+                                const hasCoords = request.destination_latitude && request.destination_longitude &&
+                                    request.destination_latitude !== 0 && request.destination_longitude !== 0;
+                                const destination = hasCoords
+                                    ? `${request.destination_latitude},${request.destination_longitude}`
+                                    : encodeURIComponent(request.destination_address);
+                                window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination}`, '_blank')
                             }}>
                                 <Navigation size={16} />
                                 Navigate

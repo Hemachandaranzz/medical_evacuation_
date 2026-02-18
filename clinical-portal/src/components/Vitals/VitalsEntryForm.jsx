@@ -43,7 +43,7 @@ export default function VitalsEntryForm({ patientId, onSuccess, onCompleteSessio
 
     const isTempCritical = () => {
         const val = parseFloat(vitals.temperature);
-        return val && (val < 95 || val > 103);
+        return val && (val < 35.0 || val > 39.5);
     };
 
     const isRrCritical = () => {
@@ -231,10 +231,10 @@ export default function VitalsEntryForm({ patientId, onSuccess, onCompleteSessio
                             onChange={handleChange}
                             placeholder="--"
                             step="0.1"
-                            min="0"
-                            max="120"
+                            min="30"
+                            max="45"
                         />
-                        <span className="unit">°F</span>
+                        <span className="unit">°C</span>
                     </div>
 
                     <div className={`vital-card ${isRrCritical() ? 'critical' : ''}`}>

@@ -123,6 +123,9 @@ const PatientDetail = () => {
                     </div>
                 </section>
 
+                {/* Transport Status */}
+                <PatientTransportStatus patientId={patient.id} />
+
                 {/* Current Vitals */}
                 <section className="vitals-section">
                     <h3>Current Vitals</h3>
@@ -162,8 +165,7 @@ const PatientDetail = () => {
                     </p>
                 </section>
 
-                {/* Transport Status */}
-                <PatientTransportStatus patientId={patient.id} />
+
 
                 {/* Vitals History */}
                 <section className="history-section">
