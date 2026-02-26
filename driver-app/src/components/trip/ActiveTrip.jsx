@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { MapPin, Navigation, AlertCircle, CheckCircle, ArrowLeft, Clock, User, Map } from 'lucide-react'
@@ -14,6 +14,75 @@ export default function ActiveTrip({ driver }) {
     const [loading, setLoading] = useState(true)
     const [updating, setUpdating] = useState(false)
     const [showMap, setShowMap] = useState(false)
+    const [driverPos, setDriverPos] = useState(null)
+    const [debugInfo, setDebugInfo] = useState({ pings: 0, lastStatus: 'init', lastLat: 0, lastLng: 0, lastErr: null })
+    const pingIntervalRef = useRef(null)
+
+    // GPS Ping loop
+    const sendPing = async (position) => {
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+            const { data: { session } } = await supabase.auth.getSession()
+
+            // Console log for developer tools
+            console.log('📍 Sending GPS Ping:', position.coords.latitude, position.coords.longitude)
+
+            const res = await fetch(`${API_URL}/location/driver/ping`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${session?.access_token}`
+                },
+                body: JSON.stringify({
+                    booking_id: tripId,
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    heading: position.coords.heading,
+                    speed_kmh: position.coords.speed ? position.coords.speed * 3.6 : null
+                })
+            });
+
+            if (res.ok) {
+                setDriverPos({ lat: position.coords.latitude, lng: position.coords.longitude });
+                setDebugInfo(prev => ({
+                    ...prev,
+                    pings: prev.pings + 1,
+                    lastStatus: '200 OK',
+                    lastLat: position.coords.latitude,
+                    lastLng: position.coords.longitude,
+                    lastErr: null
+                }))
+            } else {
+                const txt = await res.text()
+                console.error('Ping Error:', res.status, txt)
+                setDebugInfo(prev => ({ ...prev, lastStatus: `${res.status} Error`, lastErr: txt }))
+            }
+        } catch (err) {
+            console.error('Ping failed:', err);
+            setDebugInfo(prev => ({ ...prev, lastStatus: 'Fetch Failed', lastErr: err.message }))
+        }
+    }
+
+    useEffect(() => {
+        if (!navigator.geolocation) return;
+
+        const ping = () => {
+            navigator.geolocation.getCurrentPosition(
+                sendPing,
+                (err) => console.warn('GPS error:', err.message),
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        };
+
+        // Initial ping
+        ping();
+        // Ping every 10 seconds
+        pingIntervalRef.current = setInterval(ping, 10000);
+
+        return () => {
+            if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
+        };
+    }, [tripId]);
 
     useEffect(() => {
         loadTrip()
@@ -135,6 +204,9 @@ export default function ActiveTrip({ driver }) {
                     if (locData.dropoff?.latitude && locData.dropoff?.longitude) {
                         destLat = locData.dropoff.latitude
                         destLng = locData.dropoff.longitude
+                    }
+                    if (locData.driver) {
+                        setDriverPos({ lat: locData.driver.latitude, lng: locData.driver.longitude });
                     }
 
                     // Override Patient & Severity from Backend (Bypasses RLS)
@@ -294,7 +366,22 @@ export default function ActiveTrip({ driver }) {
     )
 
     if (showMap) {
-        return <MapView assignment={assignment} driver={driver} onClose={() => setShowMap(false)} />
+        return <MapView
+            assignment={assignment}
+            driver={driver}
+            driverPos={driverPos}
+            pickup={{
+                latitude: request.pickup_latitude,
+                longitude: request.pickup_longitude,
+                name: request.pickup_address
+            }}
+            dropoff={{
+                latitude: request.destination_latitude,
+                longitude: request.destination_longitude,
+                name: request.destination_address
+            }}
+            onClose={() => setShowMap(false)}
+        />
     }
 
     return (
@@ -477,6 +564,7 @@ export default function ActiveTrip({ driver }) {
                         </div>
                     </div>
                 </div>
+
             </div>
 
             {nextAction && (

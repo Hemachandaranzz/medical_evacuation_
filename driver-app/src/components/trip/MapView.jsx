@@ -1,29 +1,16 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { supabase } from '../../lib/supabase';
+import { useState, useEffect, useRef } from 'react';
 import './MapView.css';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
 /**
- * MapView — Delivery-app-like map for drivers during active trips.
- * Shows pickup/dropoff pins, driver's live GPS, route overview, and "Open in Maps" link.
- * 
- * Props:
- *   - assignment: the transport_assignment object (must have id)
- *   - driver: the current driver object
- *   - onClose: callback to close the map view
+ * MapView — Delivery-app-like map for drivers.
+ * Now receives location data as props from ActiveTrip.
  */
-export default function MapView({ assignment, driver, onClose }) {
+export default function MapView({ assignment, driver, driverPos, pickup, dropoff, onClose }) {
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const driverMarkerRef = useRef(null);
-    const [mapData, setMapData] = useState(null);
-    const [driverPos, setDriverPos] = useState(null);
-    const [eta, setEta] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [leafletLoaded, setLeafletLoaded] = useState(false);
-    const [pingActive, setPingActive] = useState(false);
-    const pingIntervalRef = useRef(null);
+    const [eta, setEta] = useState(null);
 
     // Load Leaflet dynamically
     useEffect(() => {
@@ -40,79 +27,9 @@ export default function MapView({ assignment, driver, onClose }) {
         document.head.appendChild(script);
     }, []);
 
-    // Fetch map data
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                const res = await fetch(`${API_URL}/location/booking/${assignment.id}`, {
-                    headers: { Authorization: `Bearer ${session?.access_token}` }
-                });
-                const data = await res.json();
-                setMapData(data);
-                if (data.driver) setDriverPos({ lat: data.driver.latitude, lng: data.driver.longitude });
-                if (data.eta) setEta(data.eta);
-            } catch (err) {
-                console.error('MapView fetch error:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, [assignment.id]);
-
-    // GPS Ping loop
-    const sendPing = useCallback(async (position) => {
-        try {
-            const { data: { session } } = await supabase.auth.getSession();
-            const res = await fetch(`${API_URL}/location/driver/ping`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${session?.access_token}`
-                },
-                body: JSON.stringify({
-                    booking_id: assignment.id,
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                    heading: position.coords.heading,
-                    speed_kmh: position.coords.speed ? position.coords.speed * 3.6 : null
-                })
-            });
-            if (res.ok) {
-                setDriverPos({ lat: position.coords.latitude, lng: position.coords.longitude });
-            }
-        } catch (err) {
-            console.error('Ping failed:', err);
-        }
-    }, [assignment.id]);
-
-    useEffect(() => {
-        if (!navigator.geolocation) return;
-        setPingActive(true);
-
-        const ping = () => {
-            navigator.geolocation.getCurrentPosition(
-                sendPing,
-                (err) => console.warn('GPS error:', err.message),
-                { enableHighAccuracy: true, timeout: 8000 }
-            );
-        };
-
-        // Initial ping
-        ping();
-        // Ping every 10 seconds
-        pingIntervalRef.current = setInterval(ping, 10000);
-
-        return () => {
-            if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
-            setPingActive(false);
-        };
-    }, [sendPing]);
-
     // Initialize map
     useEffect(() => {
-        if (!leafletLoaded || !mapRef.current || !mapData) return;
+        if (!leafletLoaded || !mapRef.current) return;
         const L = window.L;
 
         if (!mapInstanceRef.current) {
@@ -125,27 +42,41 @@ export default function MapView({ assignment, driver, onClose }) {
         const map = mapInstanceRef.current;
         const bounds = [];
 
-        if (mapData.pickup?.latitude) {
+        // Cleanup existing markers (except driver)
+        map.eachLayer((layer) => {
+            if (layer instanceof L.Marker && layer !== driverMarkerRef.current) {
+                map.removeLayer(layer);
+            }
+        });
+
+        if (pickup?.latitude) {
             const icon = L.divIcon({ className: 'map-marker', html: '<div class="pin pickup">P</div>', iconSize: [28, 28], iconAnchor: [14, 28] });
-            L.marker([mapData.pickup.latitude, mapData.pickup.longitude], { icon })
-                .addTo(map).bindPopup(`<b>Pickup:</b> ${mapData.pickup.name}`);
-            bounds.push([mapData.pickup.latitude, mapData.pickup.longitude]);
+            L.marker([pickup.latitude, pickup.longitude], { icon })
+                .addTo(map).bindPopup(`<b>Pickup:</b> ${pickup.name || 'Pickup'}`);
+            bounds.push([pickup.latitude, pickup.longitude]);
         }
 
-        if (mapData.dropoff?.latitude) {
+        if (dropoff?.latitude) {
             const icon = L.divIcon({ className: 'map-marker', html: '<div class="pin dropoff">H</div>', iconSize: [28, 28], iconAnchor: [14, 28] });
-            L.marker([mapData.dropoff.latitude, mapData.dropoff.longitude], { icon })
-                .addTo(map).bindPopup(`<b>Hospital:</b> ${mapData.dropoff.name}`);
-            bounds.push([mapData.dropoff.latitude, mapData.dropoff.longitude]);
+            L.marker([dropoff.latitude, dropoff.longitude], { icon })
+                .addTo(map).bindPopup(`<b>Hospital:</b> ${dropoff.name || 'Hospital'}`);
+            bounds.push([dropoff.latitude, dropoff.longitude]);
         }
 
         if (bounds.length >= 2) map.fitBounds(bounds, { padding: [50, 50] });
         else if (bounds.length === 1) map.setView(bounds[0], 13);
 
+        // Note: we don't destroy the map on unmount to keep state? 
+        // No, we should clean up if we want a fresh map on re-open.
+        // But the component unmounts when onClose is called. So:
         return () => {
-            if (mapInstanceRef.current) { mapInstanceRef.current.remove(); mapInstanceRef.current = null; }
+            if (mapInstanceRef.current) {
+                mapInstanceRef.current.remove();
+                mapInstanceRef.current = null;
+                driverMarkerRef.current = null;
+            }
         };
-    }, [leafletLoaded, mapData]);
+    }, [leafletLoaded, pickup, dropoff]);
 
     // Update driver marker
     useEffect(() => {
@@ -166,29 +97,28 @@ export default function MapView({ assignment, driver, onClose }) {
                 .bindPopup('You are here');
         }
 
-        // Also recalculate ETA
-        if (mapData?.dropoff?.latitude) {
-            const d = haversine(driverPos.lat, driverPos.lng, mapData.dropoff.latitude, mapData.dropoff.longitude);
+        // Calculate ETA
+        if (dropoff?.latitude) {
+            const d = haversine(driverPos.lat, driverPos.lng, dropoff.latitude, dropoff.longitude);
             setEta({ distanceKm: Math.round(d * 10) / 10, minutesRemaining: Math.round((d / 40) * 60) });
         }
-    }, [leafletLoaded, driverPos]);
+    }, [leafletLoaded, driverPos, dropoff]);
 
     const openInMaps = () => {
-        if (!mapData?.dropoff?.latitude) return;
-        const dest = `${mapData.dropoff.latitude},${mapData.dropoff.longitude}`;
-        // Works on Android and iOS
+        if (!dropoff?.latitude) return;
+        const dest = `${dropoff.latitude},${dropoff.longitude}`;
         window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=driving`, '_blank');
     };
 
-    if (loading) return <div className="map-view-loading">Loading map... 🗺️</div>;
+    if (!leafletLoaded) return <div className="map-view-loading">Loading map... 🗺️</div>;
 
     return (
         <div className="map-view-container">
             <div className="map-view-topbar">
                 <button className="map-back-btn" onClick={onClose}>← Back</button>
                 <div className="map-view-status">
-                    {pingActive && <span className="gps-dot">●</span>}
-                    <span>Live Tracking</span>
+                    {driverPos && <span className="gps-dot">●</span>}
+                    <span>{driverPos ? 'Live Tracking' : 'Waiting for GPS...'}</span>
                 </div>
             </div>
 
@@ -208,11 +138,9 @@ export default function MapView({ assignment, driver, onClose }) {
                     </button>
                 </div>
 
-                {mapData?.assignment && (
-                    <div className="map-trip-info">
-                        <span>Status: <strong>{mapData.assignment.status?.replace(/_/g, ' ')}</strong></span>
-                    </div>
-                )}
+                <div className="map-trip-info">
+                    <span>Status: <strong>{assignment.current_status?.replace(/_/g, ' ')}</strong></span>
+                </div>
             </div>
         </div>
     );

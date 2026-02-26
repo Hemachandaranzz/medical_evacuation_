@@ -6,7 +6,8 @@ import './LiveMap.css';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 /**
- * LiveMap — Admin-only island-wide map showing all active drivers.
+ * LiveMap — Hospital Portal version.
+ * Shows drivers transporting patients to THIS hospital (or global view if simplified).
  */
 export default function LiveMap() {
     const mapRef = useRef(null);
@@ -14,6 +15,7 @@ export default function LiveMap() {
     const markersRef = useRef({});
     const [drivers, setDrivers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [leafletLoaded, setLeafletLoaded] = useState(false);
 
     // Load Leaflet
@@ -34,13 +36,22 @@ export default function LiveMap() {
         const fetchDrivers = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
+                // Using the same endpoint for now, assuming role-based access will be handled or is open
                 const res = await fetch(`${API_URL}/location/active-drivers`, {
                     headers: { Authorization: `Bearer ${session?.access_token}` }
                 });
-                const data = await res.json();
-                setDrivers(data.drivers || []);
+
+                if (res.ok) {
+                    const data = await res.json();
+                    setDrivers(data.drivers || []);
+                } else {
+                    const text = await res.text();
+                    console.error("Failed to fetch drivers", text);
+                    setError(`Failed to load drivers: ${res.statusText}`);
+                }
             } catch (err) {
                 console.error('LiveMap fetch error:', err);
+                setError('Network error loading map data');
             } finally {
                 setLoading(false);
             }
@@ -51,6 +62,8 @@ export default function LiveMap() {
     // Subscribe to real-time updates
     useEffect(() => {
         const sock = socket.connect();
+        // Hospital users can join the same admin map room for now to see global traffic,
+        // or we could filter client-side. Using admin room for simplicity/parity.
         sock.emit('join_admin_live_map');
 
         const handleUpdate = (payload) => {
@@ -110,16 +123,9 @@ export default function LiveMap() {
             const loc = d.driver?.location;
             if (!loc) return;
 
-            const statusColor = {
-                en_route_pickup: '#ffa726',
-                patient_loaded: '#42a5f5',
-                en_route_hospital: '#ef5350',
-                accepted: '#66bb6a'
-            }[d.status] || '#9e9e9e';
-
             const icon = L.divIcon({
-                className: 'admin-marker',
-                html: `<div class="admin-driver-dot" style="background:${statusColor}">🚗</div>`,
+                className: 'hospital-marker',
+                html: `<div class="hospital-driver-dot" style="background:#ef5350">🚑</div>`,
                 iconSize: [30, 30],
                 iconAnchor: [15, 15]
             });
@@ -127,9 +133,7 @@ export default function LiveMap() {
             const popup = `
                 <b>${d.driver.name}</b><br/>
                 Status: ${d.status?.replace(/_/g, ' ')}<br/>
-                ${d.pickup?.name ? `From: ${d.pickup.name}` : ''}<br/>
-                ${d.dropoff?.name ? `To: ${d.dropoff.name}` : ''}<br/>
-                ${d.eta ? `ETA: ${d.eta.minutesRemaining} min (${d.eta.distanceKm} km)` : ''}
+                ${d.eta ? `ETA: ${d.eta.minutesRemaining} min` : ''}
             `;
 
             if (markersRef.current[d.assignmentId]) {
@@ -155,24 +159,21 @@ export default function LiveMap() {
     return (
         <div className="livemap-page">
             <div className="livemap-header">
-                <h1>🗺️ Live Driver Map</h1>
+                <h1>🚑 Incoming Ambulances</h1>
                 <div className="livemap-stats">
-                    <span className="stat-pill">{drivers.length} active driver{drivers.length !== 1 ? 's' : ''}</span>
+                    <span className="stat-pill">{drivers.length} active</span>
                 </div>
             </div>
-
-            <div className="livemap-legend">
-                <span className="legend-item"><span className="legend-dot" style={{ background: '#66bb6a' }}></span>Accepted</span>
-                <span className="legend-item"><span className="legend-dot" style={{ background: '#ffa726' }}></span>En Route Pickup</span>
-                <span className="legend-item"><span className="legend-dot" style={{ background: '#42a5f5' }}></span>Patient Loaded</span>
-                <span className="legend-item"><span className="legend-dot" style={{ background: '#ef5350' }}></span>En Route Hospital</span>
-            </div>
-
             <div ref={mapRef} className="livemap-canvas" />
+            {error && (
+                <div className="livemap-error">
+                    <p>⚠️ {error}</p>
+                </div>
+            )}
 
-            {drivers.length === 0 && (
+            {!error && drivers.length === 0 && (
                 <div className="livemap-empty">
-                    <p>No active drivers on the road right now.</p>
+                    <p>No active ambulances tracked.</p>
                 </div>
             )}
         </div>

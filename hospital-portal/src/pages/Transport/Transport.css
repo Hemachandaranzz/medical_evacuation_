@@ -1,0 +1,274 @@
+.transport-page {
+    padding: 1.5rem;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.875rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.page-description {
+    font-size: 1rem;
+    color: #64748b;
+}
+
+/* Loading & Empty States */
+.loading-state,
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    color: #94a3b8;
+    text-align: center;
+}
+
+.loading-state .spinner {
+    animation: spin 1s linear infinite;
+    color: #3b82f6;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.empty-state svg {
+    margin-bottom: 1rem;
+    opacity: 0.5;
+    color: #cbd5e1;
+}
+
+.empty-state h3 {
+    font-size: 1.25rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+/* Bookings Grid */
+.bookings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Booking Card */
+.booking-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.booking-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.booking-card::before {
+    content: '';
+    display: block;
+    height: 4px;
+    background: #e2e8f0;
+}
+
+.booking-card.pending::before {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.booking-card.confirmed::before,
+.booking-card.driver_assigned::before {
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+.booking-card.in_progress::before {
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+}
+
+.booking-card.completed::before {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.booking-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.booking-patient {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.booking-patient svg {
+    color: #3b82f6;
+}
+
+.booking-header .badge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    text-transform: capitalize;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-warning {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.badge-info {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.badge-primary {
+    background: #eff6ff;
+    color: #4f46e5;
+}
+
+.badge-success {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.badge-neutral {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.booking-body {
+    padding: 1rem 1.25rem;
+}
+
+.booking-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.booking-info-row:last-child {
+    margin-bottom: 0;
+}
+
+.booking-info-row>svg {
+    color: #94a3b8;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+.booking-info-row>div {
+    display: flex;
+    flex-direction: column;
+}
+
+.booking-info-row label {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 1px;
+}
+
+.booking-info-row span {
+    font-size: 0.9rem;
+    color: #334155;
+    font-weight: 500;
+}
+
+.booking-footer {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 1.25rem;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+}
+
+.footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.booking-time {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.urgency-badge {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.urgency-badge.routine {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.urgency-badge.urgent {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.urgency-badge.emergency {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.track-driver-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.track-driver-btn:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+}

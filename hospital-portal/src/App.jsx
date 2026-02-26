@@ -10,6 +10,8 @@ import CriticalCases from './pages/CriticalCases/CriticalCases';
 import PatientDetail from './pages/PatientDetail/PatientDetail';
 import BedManagement from './pages/BedManagement/BedManagement';
 import PatientCase from './pages/PatientCase/PatientCase';
+import LiveMap from './pages/LiveMap/LiveMap';
+import Transport from './pages/Transport/Transport';
 import './index.css';
 
 // Loading screen component
@@ -88,6 +90,8 @@ function AppRoutes() {
         <Route path="patient/:patientId" element={<PatientDetail />} />
         <Route path="patient/:patientId" element={<PatientDetail />} />
         <Route path="case/:caseId" element={<PatientCase />} />
+        <Route path="live-map" element={<LiveMap />} />
+        <Route path="transport" element={<Transport />} />
       </Route>
 
       {/* Fallback */}

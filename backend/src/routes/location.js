@@ -132,12 +132,23 @@ router.post('/driver/ping', authMiddleware, async (req, res) => {
             return res.status(403).json({ error: 'No active assignment found for this booking' });
         }
 
+        // Get the actual driver profile ID (auth ID != driver ID)
+        const { data: driverProfile, error: driverErr } = await supabase
+            .from('drivers')
+            .select('id')
+            .eq('user_id', req.user.id)
+            .single();
+
+        if (driverErr || !driverProfile) {
+            return res.status(403).json({ error: 'Driver profile not found' });
+        }
+
         // UPSERT the driver location (one row per booking+driver)
         const { data, error } = await supabase
             .from('driver_locations')
             .upsert({
                 booking_id,
-                driver_id: req.user.id,
+                driver_id: driverProfile.id,
                 latitude,
                 longitude,
                 heading: heading || null,
@@ -162,7 +173,7 @@ router.post('/driver/ping', authMiddleware, async (req, res) => {
         req.io?.to(`booking:${booking_id}`).emit('driver:location_update', payload);
         req.io?.to('admin:live_map').emit('driver:location_update', {
             ...payload,
-            driverId: req.user.id
+            driverId: driverProfile.id
         });
 
         res.json({ data });
@@ -310,8 +321,15 @@ router.get('/active-drivers', authMiddleware, async (req, res) => {
             .eq('id', req.user.id)
             .single();
 
-        if (profile?.role !== 'admin') {
-            return res.status(403).json({ error: 'Admin access required' });
+        if (profile) {
+            console.log(`[Location] /active-drivers access check. User: ${req.user.id}, Role: ${profile.role}`);
+        } else {
+            console.warn(`[Location] /active-drivers access check. User: ${req.user.id}, NO PROFILE FOUND`);
+        }
+
+        if (profile?.role !== 'admin' && profile?.role !== 'hospital_admin' && profile?.role !== 'hospital') {
+            console.warn(`[Location] /active-drivers ACCESS DENIED. Role: ${profile?.role}`);
+            return res.status(403).json({ error: 'Admin or Hospital access required' });
         }
 
         // Get all active assignments with driver locations

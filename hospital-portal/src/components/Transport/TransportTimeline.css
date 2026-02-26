@@ -1,0 +1,133 @@
+.transport-timeline-container {
+    padding: 1rem 0;
+    margin-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.transport-timeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+}
+
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.timeline-step.completed,
+.timeline-step.active {
+    opacity: 1;
+}
+
+.step-connector {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    position: relative;
+    height: 30px;
+}
+
+.step-indicator {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    color: #64748b;
+    transition: all 0.3s ease;
+}
+
+.timeline-step.completed .step-indicator {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+}
+
+.timeline-step.active .step-indicator {
+    background-color: white;
+    border-color: #3b82f6;
+    color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    transform: scale(1.1);
+}
+
+.line {
+    flex: 1;
+    height: 2px;
+    background-color: #cbd5e1;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50%;
+    z-index: 1;
+}
+
+/* Lines connecting steps */
+/* Left line for steps after first */
+.timeline-step:not(:first-child) .step-connector::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50%;
+    height: 2px;
+    background-color: #cbd5e1;
+    z-index: 1;
+}
+
+/* Right line for steps before last */
+.timeline-step:not(:last-child) .step-connector::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50%;
+    height: 2px;
+    background-color: #cbd5e1;
+    z-index: 1;
+}
+
+/* Active/Completed Lines */
+.timeline-step.completed .step-connector::before,
+.timeline-step.active .step-connector::before,
+.timeline-step.completed .step-connector::after {
+    background-color: #3b82f6;
+}
+
+.step-content {
+    margin-top: 0.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.step-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.timeline-step.active .step-label {
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+.step-time {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}

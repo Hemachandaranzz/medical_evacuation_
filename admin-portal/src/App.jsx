@@ -7,7 +7,6 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Clinics from './pages/Clinics/Clinics';
 import Transport from './pages/Transport/Transport';
 import Hospitals from './pages/Hospitals/Hospitals';
-import LiveMap from './pages/LiveMap/LiveMap';
 import './styles/global.css';
 
 // Placeholder pages for future implementation
@@ -56,7 +55,6 @@ function App() {
             <Route path="clinics" element={<Clinics />} />
             <Route path="transport" element={<Transport />} />
             <Route path="hospitals" element={<Hospitals />} />
-            <Route path="live-map" element={<LiveMap />} />
             <Route path="activity" element={<ActivityLog />} />
             <Route path="settings" element={<Settings />} />
           </Route>

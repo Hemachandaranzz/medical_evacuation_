@@ -31,7 +31,6 @@ const navigation = [
             { name: 'Clinics', path: '/clinics', icon: Building2 },
             { name: 'Hospitals', path: '/hospitals', icon: Hospital },
             { name: 'Transport', path: '/transport', icon: Truck },
-            { name: 'Live Map', path: '/live-map', icon: MapPinned },
         ],
     },
     {

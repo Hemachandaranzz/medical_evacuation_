@@ -500,6 +500,95 @@ router.post('/', clinicAuth, async (req, res) => {
 });
 
 // ============================================================================
+// GET BOOKINGS FOR HOSPITAL (Incoming)
+// ============================================================================
+
+router.get('/hospital', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        console.log(`[GET /bookings/hospital] Fetching bookings for hospital admin: ${userId}`);
+
+        // Find hospital for this admin
+        const { data: hospital, error: hospitalError } = await supabase
+            .from('hospitals')
+            .select('id, name')
+            .eq('admin_id', userId)
+            .single();
+
+        if (hospitalError || !hospital) {
+            console.error('[GET /bookings/hospital] Hospital lookup failed:', hospitalError);
+            return res.status(404).json({ error: 'Hospital profile not found for this user' });
+        }
+
+        console.log(`[GET /bookings/hospital] Found hospital: ${hospital.name} (${hospital.id})`);
+
+        // Find bookings with destination matching hospital name
+        const { data: bookings, error } = await supabase
+            .from('transport_bookings')
+            .select(`
+                *,
+                patient:patients(id, name, patient_id),
+                clinic:clinics(id, name, operating_location, contact_phone),
+                vehicle:vehicles(id, vehicle_name, vehicle_type),
+                driver:drivers(id, full_name, phone_number, current_status)
+            `)
+            .ilike('destination_location', `%${hospital.name}%`)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('[GET /bookings/hospital] Query error:', error);
+            throw error;
+        }
+
+        // 2. Manual Join: Fetch assignments for these bookings
+        if (bookings && bookings.length > 0) {
+            const driverIds = bookings
+                .filter(b => b.driver_id)
+                .map(b => b.driver_id);
+
+            let assignments = [];
+
+            if (driverIds.length > 0) {
+                const { data: activeAssignments, error: assignmentsError } = await supabase
+                    .from('transport_assignments')
+                    .select(`
+                        *,
+                        driver:drivers(full_name)
+                    `)
+                    .in('driver_id', driverIds);
+
+                if (!assignmentsError) {
+                    assignments = activeAssignments || [];
+                }
+            }
+
+            // Merge assignments into bookings
+            bookings.forEach(booking => {
+                booking.assignments = [];
+
+                // Find assignment for this booking
+                const match = assignments.find(a =>
+                    (a.transport_booking_id === booking.id) ||
+                    (a.driver_id === booking.driver_id && a.current_status !== 'completed' && !a.transport_booking_id)
+                );
+
+                if (match) {
+                    booking.assignments = [match];
+                }
+            });
+        }
+
+        res.json({
+            data: bookings || [],
+            count: (bookings || []).length
+        });
+    } catch (error) {
+        console.error('Get hospital bookings error:', error);
+        res.status(500).json({ error: 'Failed to fetch bookings' });
+    }
+});
+
+// ============================================================================
 // GET BOOKING DETAILS
 // ============================================================================
 

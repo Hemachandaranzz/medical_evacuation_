@@ -1,0 +1,62 @@
+.livemap-page {
+    height: calc(100vh - 80px);
+    /* Adjust based on layout */
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+}
+
+.livemap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.livemap-header h1 {
+    font-size: 1.5rem;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.livemap-canvas {
+    flex: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    min-height: 400px;
+}
+
+.hospital-driver-dot {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background: #ef5350;
+    /* Red for emergency */
+}
+
+.livemap-loading,
+.livemap-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #64748b;
+}
+
+.stat-pill {
+    background: #eff6ff;
+    color: #1d4ed8;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}

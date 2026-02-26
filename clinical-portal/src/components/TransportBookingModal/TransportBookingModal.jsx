@@ -26,7 +26,7 @@ export default function TransportBookingModal({
     const [bookingDetails, setBookingDetails] = useState({
         pickup_location: '',
         destination_location: '',
-        urgency: 'medium',
+        urgency: 'critical',
         special_requirements: '',
         notes: ''
     });
@@ -70,7 +70,7 @@ export default function TransportBookingModal({
         setBookingDetails({
             pickup_location: '',
             destination_location: '',
-            urgency: 'medium',
+            urgency: 'critical',
             special_requirements: '',
             notes: ''
         });
@@ -265,24 +265,6 @@ export default function TransportBookingModal({
                                 />
                             </div>
 
-                            {/* Urgency */}
-                            <div className="form-group">
-                                <label>
-                                    <AlertTriangle size={16} />
-                                    Urgency Level
-                                </label>
-                                <select
-                                    name="urgency"
-                                    value={bookingDetails.urgency}
-                                    onChange={handleInputChange}
-                                    required
-                                >
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
-                                    <option value="critical">Critical</option>
-                                </select>
-                            </div>
 
                             {/* Special Requirements */}
                             <div className="form-group">

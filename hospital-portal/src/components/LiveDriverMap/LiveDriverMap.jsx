@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { api } from '../../services/apiClient';
+import api from '../../services/api';
 import { socket } from '../../services/socketClient';
 import { MapPin, Navigation, Clock } from 'lucide-react';
 import './LiveDriverMap.css';
@@ -54,7 +54,8 @@ export default function LiveDriverMap({ bookingId, onClose }) {
     useEffect(() => {
         const fetchMapData = async () => {
             try {
-                const data = await api.get(`/location/booking/${bookingId}`);
+                const response = await api.get(`/location/booking/${bookingId}`);
+                const data = response.data;
                 setMapData(data);
                 if (data.driver) {
                     setDriverPos({ lat: data.driver.latitude, lng: data.driver.longitude });
