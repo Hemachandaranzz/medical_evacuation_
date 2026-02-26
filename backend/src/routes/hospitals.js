@@ -106,7 +106,7 @@ router.get('/by-region/:region', authMiddleware, async (req, res) => {
     }
 });
 
-// Get region mapping (origin -> target)
+// Get region mapping (origin -> target regions, can be multiple)
 router.get('/region-mapping/:origin', authMiddleware, async (req, res) => {
     try {
         const { origin } = req.params;
@@ -114,17 +114,17 @@ router.get('/region-mapping/:origin', authMiddleware, async (req, res) => {
         const { data, error } = await supabase
             .from('region_mappings')
             .select('target_region')
-            .eq('origin_region', origin)
-            .maybeSingle();
+            .eq('origin_region', origin);
 
         if (error) throw error;
 
-        if (!data) {
+        if (!data || data.length === 0) {
             // Default to Chennai if no mapping found
-            return res.json({ target_region: 'Chennai' });
+            return res.json({ target_regions: ['Chennai'], target_region: 'Chennai' });
         }
 
-        res.json(data);
+        const target_regions = data.map(d => d.target_region);
+        res.json({ target_regions, target_region: target_regions[0] });
     } catch (error) {
         console.error('Error fetching region mapping:', error);
         res.status(500).json({ error: error.message });
